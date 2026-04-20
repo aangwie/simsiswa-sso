@@ -15,7 +15,10 @@ class SchoolClassController extends Controller
 
     public function show($id)
     {
-        $schoolClass = SchoolClass::with('students')->findOrFail($id);
+        $schoolClass = SchoolClass::with(['students' => function($query) {
+            $query->where('is_active', true);
+        }])->findOrFail($id);
+        
         return view('school_classes.show', compact('schoolClass'));
     }
 
