@@ -51,6 +51,116 @@ class StudentController extends Controller
         return $pdf->download('Data_Siswa_' . $student->name . '.pdf');
     }
 
+    public function exportExcel()
+    {
+        $students = Student::with('schoolClass')->orderBy('name', 'asc')->get();
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Data Siswa');
+
+        $headers = ['No', 'Nama Siswa', 'NIS', 'NISN', 'Kelas', 'Tahun Masuk', 'Jenis Kelamin', 'Tanggal Lahir', 'Status Lulus', 'Nama Ayah', 'Nama Ibu', 'Alamat', 'Status Aktif'];
+        $sheet->fromArray($headers, null, 'A1');
+
+        $row = 2;
+        foreach ($students as $index => $student) {
+            $sheet->setCellValue('A' . $row, $index + 1);
+            $sheet->setCellValue('B' . $row, $student->name);
+            $sheet->setCellValueExplicit('C' . $row, (string) $student->nis, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+            $sheet->setCellValueExplicit('D' . $row, (string) $student->nisn, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+            $sheet->setCellValue('E' . $row, $student->schoolClass ? $student->schoolClass->name : '');
+            $sheet->setCellValue('F' . $row, $student->enrollment_year);
+            $sheet->setCellValue('G' . $row, $student->gender == 'male' ? 'L' : 'P');
+            $sheet->setCellValue('H' . $row, $student->tanggal_lahir);
+            $sheet->setCellValue('I' . $row, $student->status_lulus);
+            $sheet->setCellValue('J' . $row, $student->nama_ayah);
+            $sheet->setCellValue('K' . $row, $student->nama_ibu);
+            $sheet->setCellValue('L' . $row, $student->alamat);
+            $sheet->setCellValue('M' . $row, $student->is_active ? 'Aktif' : 'Nonaktif');
+            $row++;
+        }
+
+        foreach(range('A','M') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $fileName = 'Data_Siswa_' . date('Ymd_His') . '.xlsx';
+        
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="'. urlencode($fileName).'"');
+        $writer->save('php://output');
+        exit;
+    }
+
+    public function importTemplate()
+    {
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Template Import Siswa');
+
+        $headers = ['Nama Siswa', 'Jenis Kelamin (L/P)', 'NIS', 'NISN', 'ID Kelas', 'Tahun Masuk', 'Tanggal Lahir (YYYY-MM-DD)', 'Nama Ayah', 'Nama Ibu', 'Alamat'];
+        $sheet->fromArray($headers, null, 'A1');
+
+        // Note: You can retrieve standard classes here if needed, but simple fallback to 1 is OK
+        $example = ['Budi Santoso', 'L', '123456', '0012345678', '1', '2023', '2005-08-17', 'Ayah Budi', 'Ibu Budi', 'Jl. Merdeka No. 1'];
+        $sheet->fromArray($example, null, 'A2');
+        
+        foreach(range('A','J') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $fileName = 'Template_Import_Siswa.xlsx';
+        
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="'. urlencode($fileName).'"');
+        $writer->save('php://output');
+        exit;
+    }
+
+    public function importExcel(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls'
+        ]);
+
+        $file = $request->file('file');
+        
+        try {
+            $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file->getPathname());
+            $sheet = $spreadsheet->getActiveSheet();
+            $rows = $sheet->toArray();
+            
+            // Remove header
+            array_shift($rows);
+            
+            $count = 0;
+            foreach ($rows as $row) {
+                // Ignore empty rows (Nama Siswa)
+                if (empty($row[0])) continue;
+
+                Student::create([
+                    'name' => $row[0],
+                    'gender' => (strtoupper(trim($row[1] ?? '')) == 'P' || strtoupper(trim($row[1] ?? '')) == 'PEREMPUAN') ? 'female' : 'male',
+                    'nis' => mb_substr((string) ($row[2] ?? ''), 0, 255) ?: null,
+                    'nisn' => mb_substr((string) ($row[3] ?? ''), 0, 255) ?: null,
+                    'school_class_id' => !empty($row[4]) ? $row[4] : 1, // fallback to class id 1
+                    'enrollment_year' => $row[5] ?? date('Y'),
+                    'tanggal_lahir' => !empty($row[6]) ? date('Y-m-d', strtotime($row[6])) : null,
+                    'nama_ayah' => $row[7] ?? null,
+                    'nama_ibu' => $row[8] ?? null,
+                    'alamat' => $row[9] ?? null,
+                    'is_active' => 1
+                ]);
+                $count++;
+            }
+            
+            return redirect()->route('students.index')->with('success', $count . ' data siswa berhasil diimport.');
+        } catch (\Exception $e) {
+            return redirect()->route('students.index')->withErrors(['Gagal mengimport file: ' . $e->getMessage()]);
+        }
+    }
+
     public function create()
     {
         $classes = SchoolClass::all();

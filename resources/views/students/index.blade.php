@@ -11,7 +11,19 @@
             <h2 class="text-lg font-bold text-slate-800">Daftar Siswa</h2>
             <p class="text-sm text-slate-500">Kelola data seluruh siswa beserta status dan kelasnya.</p>
         </div>
-        <div>
+        <div class="flex items-center gap-2">
+            <a href="{{ route('students.export-excel') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span class="hidden sm:block">Export Excel</span>
+            </a>
+            <button type="button" onclick="showImportModal()" class="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:text-indigo-600 rounded-xl transition-all shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                <span class="hidden sm:block">Import Excel</span>
+            </button>
             <a href="{{ route('students.create') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 rounded-xl transition-all shadow-sm shadow-indigo-200">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -28,6 +40,23 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         <p class="text-sm font-medium">{{ session('success') }}</p>
+    </div>
+    @endif
+
+    <!-- Alert Error -->
+    @if($errors->any())
+    <div class="bg-red-50 text-red-700 p-4 border-b border-red-100 flex items-start gap-3">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div>
+            <p class="text-sm font-medium">Terjadi kesalahan:</p>
+            <ul class="text-sm list-disc list-inside mt-1">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
     </div>
     @endif
 
@@ -179,7 +208,62 @@
     @endif
 </div>
 
+<!-- Import Modal -->
+<div id="importModal" class="fixed inset-0 z-50 flex items-center justify-center hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" aria-hidden="true" onclick="closeImportModal()"></div>
+    
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden transform transition-all">
+        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+            <h3 class="text-lg font-bold text-slate-800" id="modal-title">Import Data Siswa</h3>
+            <button type="button" onclick="closeImportModal()" class="text-slate-400 hover:text-slate-500">
+                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        
+        <form action="{{ route('students.import-excel') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div class="p-6 space-y-4">
+                <div class="bg-indigo-50 text-indigo-700 p-4 rounded-xl text-sm border border-indigo-100">
+                    <p class="font-semibold mb-2">Panduan Import:</p>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>Gunakan file template yang disediakan.</li>
+                        <li>Format file harus berakhiran <strong>.xlsx</strong>.</li>
+                        <li>Jangan mengubah baris header (baris pertama).</li>
+                    </ul>
+                    <div class="mt-3">
+                        <a href="{{ route('students.import-template') }}" class="inline-flex items-center gap-1.5 text-indigo-600 hover:text-indigo-800 font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4-4m0 0L8 8m4-4v12" />
+                            </svg>
+                            Download Template Disini
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Pilih File Excel</label>
+                    <input type="file" name="file" accept=".xlsx, .xls" required class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+                </div>
+            </div>
+            
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-3">
+                <button type="button" onclick="closeImportModal()" class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors">Batal</button>
+                <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition-colors">Import Data</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
+function showImportModal() {
+    document.getElementById('importModal').classList.remove('hidden');
+}
+function closeImportModal() {
+    document.getElementById('importModal').classList.add('hidden');
+}
+
 function showStudentDetail(id) {
     Swal.fire({
         title: 'Memuat Data...',

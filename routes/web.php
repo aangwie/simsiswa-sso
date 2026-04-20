@@ -24,6 +24,9 @@ Route::middleware('auth')->group(function () {
     
     Route::resource('students', StudentController::class);
     Route::get('students/{student}/export-pdf', [StudentController::class, 'exportPdf'])->name('students.export-pdf');
+    Route::get('students-export-excel', [StudentController::class, 'exportExcel'])->name('students.export-excel');
+    Route::get('students-import-template', [StudentController::class, 'importTemplate'])->name('students.import-template');
+    Route::post('students-import-excel', [StudentController::class, 'importExcel'])->name('students.import-excel');
     Route::resource('classes', SchoolClassController::class);
     Route::resource('subjects', SubjectController::class);
 

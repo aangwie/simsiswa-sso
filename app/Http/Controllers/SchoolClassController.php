@@ -9,7 +9,9 @@ class SchoolClassController extends Controller
 {
     public function index()
     {
-        $classes = SchoolClass::withCount('students')->paginate(10);
+        $classes = SchoolClass::withCount(['students' => function ($query) {
+            $query->where('is_active', true);
+        }])->paginate(10);
         return view('school_classes.index', compact('classes'));
     }
 
