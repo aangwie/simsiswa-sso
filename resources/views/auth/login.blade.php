@@ -11,18 +11,18 @@
         body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="min-h-screen bg-slate-50 flex flex-col relative overflow-x-hidden overflow-y-auto text-slate-800">
+<body class="min-h-screen bg-slate-50 flex flex-col relative overflow-hidden text-slate-800">
 
     <!-- Decorative backgrounds -->
     <div class="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-indigo-500/20 blur-3xl pointer-events-none"></div>
     <div class="absolute top-1/2 right-0 w-[500px] h-[500px] rounded-full bg-purple-500/20 blur-[100px] pointer-events-none translate-x-1/3 -translate-y-1/2"></div>
     <div class="absolute -bottom-24 left-1/4 w-72 h-72 rounded-full bg-blue-500/20 blur-3xl pointer-events-none"></div>
 
-    <div class="m-auto w-full py-12 sm:px-6 lg:px-8">
-        <div class="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
+    <div class="flex-1 flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8 z-10 w-full">
+        <div class="w-full max-w-md relative z-10">
             <div class="flex justify-center">
-                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/40 transform -rotate-6 hover:rotate-0 transition-transform duration-300 cursor-pointer">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="w-16 h-16 shrink-0 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/40 transform -rotate-6 hover:rotate-0 transition-transform duration-300 cursor-pointer" style="width: 64px; height: 64px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 32px; height: 32px;">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg>
                 </div>
@@ -35,7 +35,7 @@
             </p>
         </div>
 
-        <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
+        <div class="mt-8 w-full max-w-md relative z-10">
             <div class="bg-white/70 backdrop-blur-xl py-8 px-4 shadow-2xl shadow-indigo-900/5 sm:rounded-3xl sm:px-10 border border-white">
             
             @if ($errors->any())
