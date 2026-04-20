@@ -9,9 +9,35 @@ use Illuminate\Support\Facades\Process;
 
 class SettingController extends Controller
 {
+    public function website()
+    {
+        $settings = Setting::whereIn('key', ['website_name', 'website_logo'])->get()->pluck('value', 'key');
+        return view('settings.website', compact('settings'));
+    }
+
+    public function websiteUpdate(Request $request)
+    {
+        $request->validate([
+            'website_name' => 'nullable|string|max:255',
+            'website_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+        ]);
+
+        if ($request->has('website_name')) {
+            Setting::updateOrCreate(['key' => 'website_name'], ['value' => $request->website_name]);
+        }
+
+        if ($request->hasFile('website_logo')) {
+            $file = $request->file('website_logo');
+            $base64 = 'data:' . $file->getMimeType() . ';base64,' . base64_encode(file_get_contents($file));
+            Setting::updateOrCreate(['key' => 'website_logo'], ['value' => $base64]);
+        }
+
+        return redirect()->back()->with('success', 'Pengaturan Website berhasil diperbarui.');
+    }
+
     public function index()
     {
-        $settings = Setting::all();
+        $settings = Setting::whereNotIn('key', ['website_name', 'website_logo'])->get();
         return view('settings.index', compact('settings'));
     }
 

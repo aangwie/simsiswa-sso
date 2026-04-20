@@ -3,7 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'SIM Siswa - Admin Dashboard')</title>
+    @php
+        $websiteLogo = \App\Models\Setting::where('key', 'website_logo')->first()?->value;
+        $websiteName = \App\Models\Setting::where('key', 'website_name')->first()?->value ?? 'SIMSiswa';
+    @endphp
+    <title>@yield('title', $websiteName . ' - Admin Dashboard')</title>
+    
+    @if($websiteLogo)
+    <link rel="icon" href="{{ $websiteLogo }}">
+    @else
+    <link rel="icon" href="{{ asset('favicon.ico') }}">
+    @endif
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -54,13 +64,19 @@
         
         <div class="flex items-center justify-between h-20 px-6 bg-indigo-950 border-b border-indigo-800/50 overflow-hidden">
             <div class="flex items-center gap-3 min-w-max">
+                @if($websiteLogo)
+                <div class="w-10 h-10 flex-shrink-0 rounded-xl bg-white p-1 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                    <img src="{{ $websiteLogo }}" alt="Logo" class="w-full h-full object-contain">
+                </div>
+                @else
                 <div class="w-10 h-10 flex-shrink-0 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg>
                 </div>
+                @endif
                 <div x-show="!sidebarMinimized" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
-                    <h1 class="text-xl font-bold tracking-wider relative top-px text-transparent bg-clip-text bg-gradient-to-r from-white to-indigo-200">SIMSiswa</h1>
+                    <h1 class="text-xl font-bold tracking-wider relative top-px text-transparent bg-clip-text bg-gradient-to-r from-white to-indigo-200">{{ $websiteName }}</h1>
                 </div>
             </div>
             
@@ -126,15 +142,25 @@
                 </div>
             </div>
 
-            <a href="{{ route('settings.index') }}" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('settings.*') ? 'bg-indigo-800/60 text-white border-indigo-700/50 shadow-inner' : 'text-indigo-200 border border-transparent hover:bg-indigo-800/40 hover:text-white hover:border-indigo-700/30 transition-all' }}"
-                :title="sidebarMinimized ? 'Pengaturan' : ''">
-                <svg class="h-5 w-5 flex-shrink-0 {{ request()->routeIs('settings.*') ? 'text-indigo-300' : 'text-indigo-400 group-hover:text-indigo-300 transition-colors' }}" 
+            <a href="{{ route('settings.website') }}" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('settings.website') ? 'bg-indigo-800/60 text-white border-indigo-700/50 shadow-inner' : 'text-indigo-200 border border-transparent hover:bg-indigo-800/40 hover:text-white hover:border-indigo-700/30 transition-all' }}"
+                :title="sidebarMinimized ? 'Pengaturan Website' : ''">
+                <svg class="h-5 w-5 flex-shrink-0 {{ request()->routeIs('settings.website') ? 'text-indigo-300' : 'text-indigo-400 group-hover:text-indigo-300 transition-colors' }}" 
+                    :class="{'mr-3': !sidebarMinimized}"
+                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                </svg>
+                <span x-show="!sidebarMinimized" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-x-2" x-transition:enter-end="opacity-100 translate-x-0">Pengaturan Website</span>
+            </a>
+
+            <a href="{{ route('settings.index') }}" class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('settings.index') ? 'bg-indigo-800/60 text-white border-indigo-700/50 shadow-inner' : 'text-indigo-200 border border-transparent hover:bg-indigo-800/40 hover:text-white hover:border-indigo-700/30 transition-all' }}"
+                :title="sidebarMinimized ? 'Pengaturan Umum' : ''">
+                <svg class="h-5 w-5 flex-shrink-0 {{ request()->routeIs('settings.index') ? 'text-indigo-300' : 'text-indigo-400 group-hover:text-indigo-300 transition-colors' }}" 
                     :class="{'mr-3': !sidebarMinimized}"
                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 002.572-1.065z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                <span x-show="!sidebarMinimized" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-x-2" x-transition:enter-end="opacity-100 translate-x-0">Pengaturan</span>
+                <span x-show="!sidebarMinimized" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-x-2" x-transition:enter-end="opacity-100 translate-x-0">Pengaturan Umum</span>
             </a>
         </div>
         
@@ -239,7 +265,7 @@
             <footer class="relative z-10 border-t border-slate-200 bg-white shadow-sm mt-auto">
                 <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
                     <p class="text-sm text-slate-500 font-medium">
-                        &copy; {{ date('Y') }} SIMSiswa. All rights reserved.
+                        &copy; {{ date('Y') }} {{ $websiteName }}. All rights reserved.
                     </p>
                     <div class="flex items-center gap-4 text-xs font-medium text-slate-400 bg-slate-50 px-4 py-2 rounded-lg border border-slate-100">
                         <div class="flex items-center gap-1.5">

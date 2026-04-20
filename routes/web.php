@@ -28,6 +28,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('subjects', SubjectController::class);
 
     // Settings
+    Route::get('settings/website', [SettingController::class, 'website'])->name('settings.website');
+    Route::post('settings/website', [SettingController::class, 'websiteUpdate'])->name('settings.website.update');
     Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
     Route::get('git-update', [SettingController::class, 'gitUpdate'])->name('settings.git-update');

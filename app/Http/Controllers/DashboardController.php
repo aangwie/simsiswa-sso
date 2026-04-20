@@ -14,10 +14,12 @@ class DashboardController extends Controller
 
         $maleStudents = DB::table('students')
             ->where('gender', 'male')
+            ->where('is_active', 1)
             ->count();
 
         $femaleStudents = DB::table('students')
             ->where('gender', 'female')
+            ->where('is_active', 1)
             ->count();
 
         $graduatedAndMutatedStudents = DB::table('students')
