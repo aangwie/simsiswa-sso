@@ -32,6 +32,21 @@
             <label class="block text-sm font-medium text-slate-700 mb-1">Nama Mapel</label>
             <input type="text" name="name" value="{{ old('name') }}" class="w-full rounded-xl border-slate-200 shadow-sm px-4 py-2" required>
         </div>
+        <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Kategori</label>
+            <select name="category" class="w-full rounded-xl border-slate-200 shadow-sm px-4 py-2 bg-white" required>
+                <option value="Kelompok A" {{ old('category') == 'Kelompok A' ? 'selected' : '' }}>Kelompok A</option>
+                <option value="Kelompok B" {{ old('category') == 'Kelompok B' ? 'selected' : '' }}>Kelompok B</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Urutan</label>
+            <select name="order" class="w-full rounded-xl border-slate-200 shadow-sm px-4 py-2 bg-white" required>
+                @for($i = 1; $i <= 16; $i++)
+                    <option value="{{ $i }}" {{ old('order') == $i ? 'selected' : '' }}>{{ $i }}</option>
+                @endfor
+            </select>
+        </div>
         <div class="pt-4 flex justify-end">
             <button type="submit" class="px-6 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium rounded-xl hover:from-purple-600 hover:to-blue-600 transition-all shadow-sm">Simpan</button>
         </div>

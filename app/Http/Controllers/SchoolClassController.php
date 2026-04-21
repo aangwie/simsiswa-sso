@@ -26,11 +26,17 @@ class SchoolClassController extends Controller
 
     public function create()
     {
+        if (auth()->user()->role === 'teacher') {
+            abort(403, 'Akses ditolak. Anda tidak memiliki izin untuk melakukan tindakan ini.');
+        }
         return view('school_classes.create');
     }
 
     public function store(Request $request)
     {
+        if (auth()->user()->role === 'teacher') {
+            abort(403, 'Akses ditolak. Anda tidak memiliki izin untuk melakukan tindakan ini.');
+        }
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'grade' => 'required|string|max:255',
@@ -46,11 +52,17 @@ class SchoolClassController extends Controller
 
     public function edit(SchoolClass $class)
     {
+        if (auth()->user()->role === 'teacher') {
+            abort(403, 'Akses ditolak. Anda tidak memiliki izin untuk melakukan tindakan ini.');
+        }
         return view('school_classes.edit', compact('class'));
     }
 
     public function update(Request $request, SchoolClass $class)
     {
+        if (auth()->user()->role === 'teacher') {
+            abort(403, 'Akses ditolak. Anda tidak memiliki izin untuk melakukan tindakan ini.');
+        }
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'grade' => 'required|string|max:255',
@@ -66,6 +78,9 @@ class SchoolClassController extends Controller
 
     public function destroy(SchoolClass $class)
     {
+        if (auth()->user()->role === 'teacher') {
+            abort(403, 'Akses ditolak. Anda tidak memiliki izin untuk melakukan tindakan ini.');
+        }
         $class->delete();
         return redirect()->route('classes.index')->with('success', 'Data kelas berhasil dihapus.');
     }

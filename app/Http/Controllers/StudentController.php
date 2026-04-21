@@ -94,6 +94,9 @@ class StudentController extends Controller
 
     public function importTemplate()
     {
+        if (auth()->user()->role === 'teacher') {
+            abort(403, 'Akses ditolak. Anda tidak memiliki izin untuk melakukan tindakan ini.');
+        }
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Template Import Siswa');
@@ -120,6 +123,9 @@ class StudentController extends Controller
 
     public function importExcel(Request $request)
     {
+        if (auth()->user()->role === 'teacher') {
+            abort(403, 'Akses ditolak. Anda tidak memiliki izin untuk melakukan tindakan ini.');
+        }
         $request->validate([
             'file' => 'required|mimes:xlsx,xls'
         ]);
@@ -163,12 +169,18 @@ class StudentController extends Controller
 
     public function create()
     {
+        if (auth()->user()->role === 'teacher') {
+            abort(403, 'Akses ditolak. Anda tidak memiliki izin untuk melakukan tindakan ini.');
+        }
         $classes = SchoolClass::all();
         return view('students.create', compact('classes'));
     }
 
     public function store(Request $request)
     {
+        if (auth()->user()->role === 'teacher') {
+            abort(403, 'Akses ditolak. Anda tidak memiliki izin untuk melakukan tindakan ini.');
+        }
         $validated = $request->validate([
             'school_class_id' => 'required|exists:school_classes,id',
             'name' => 'required|string|max:255',
@@ -193,12 +205,18 @@ class StudentController extends Controller
 
     public function edit(Student $student)
     {
+        if (auth()->user()->role === 'teacher') {
+            abort(403, 'Akses ditolak. Anda tidak memiliki izin untuk melakukan tindakan ini.');
+        }
         $classes = SchoolClass::all();
         return view('students.edit', compact('student', 'classes'));
     }
 
     public function update(Request $request, Student $student)
     {
+        if (auth()->user()->role === 'teacher') {
+            abort(403, 'Akses ditolak. Anda tidak memiliki izin untuk melakukan tindakan ini.');
+        }
         $validated = $request->validate([
             'school_class_id' => 'required|exists:school_classes,id',
             'name' => 'required|string|max:255',
@@ -223,6 +241,9 @@ class StudentController extends Controller
 
     public function destroy(Student $student)
     {
+        if (auth()->user()->role === 'teacher') {
+            abort(403, 'Akses ditolak. Anda tidak memiliki izin untuk melakukan tindakan ini.');
+        }
         $student->delete();
         return redirect()->route('students.index')->with('success', 'Data siswa berhasil dihapus.');
     }

@@ -9,6 +9,9 @@ use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\SettingController;
 
+use App\Http\Controllers\SemesterController;
+use App\Http\Controllers\ReportController;
+
 Route::get('/', function () {
     return redirect('/login');
 });
@@ -28,6 +31,13 @@ Route::middleware('auth')->group(function () {
     Route::get('students-import-template', [StudentController::class, 'importTemplate'])->name('students.import-template');
     Route::post('students-import-excel', [StudentController::class, 'importExcel'])->name('students.import-excel');
     Route::resource('classes', SchoolClassController::class);
+    Route::resource('semesters', SemesterController::class);
+    Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('reports/{class}', [ReportController::class, 'show'])->name('reports.show');
+    Route::post('reports/{class}', [ReportController::class, 'store'])->name('reports.store');
+    Route::get('reports/{class}/export-excel', [ReportController::class, 'exportExcel'])->name('reports.export-excel');
+    Route::get('reports/{class}/import-template', [ReportController::class, 'importTemplate'])->name('reports.import-template');
+    Route::post('reports/{class}/import-excel', [ReportController::class, 'importExcel'])->name('reports.import-excel');
     Route::resource('subjects', SubjectController::class);
 
     // Settings

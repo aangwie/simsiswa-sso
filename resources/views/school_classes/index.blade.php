@@ -10,11 +10,13 @@
             <h2 class="text-lg font-bold text-slate-800">Daftar Kelas</h2>
             <p class="text-sm text-slate-500">Pilih kelas untuk melihat daftar siswanya.</p>
         </div>
+        @if(auth()->user()->role !== 'teacher')
         <div>
             <a href="{{ route('classes.create') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 rounded-xl transition-all shadow-sm shadow-indigo-200">
                 Tambah Kelas
             </a>
         </div>
+        @endif
     </div>
 
     @if(session('success'))
@@ -39,10 +41,12 @@
             
             <div class="mt-4 pt-4 border-t border-slate-200 flex justify-between items-center">
                 <span class="text-sm text-indigo-600 font-medium">Lihat Siswa &rarr;</span>
+                @if(auth()->user()->role !== 'teacher')
                 <form action="{{ route('classes.destroy', $c->id) }}" method="POST" onsubmit="return confirm('Hapus kelas ini?');">
                     @csrf @method('DELETE')
                     <button type="submit" class="text-red-500 hover:text-red-700 text-sm">Hapus</button>
                 </form>
+                @endif
             </div>
         </a>
         @empty
