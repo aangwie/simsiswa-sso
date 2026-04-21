@@ -42,7 +42,7 @@ class ReportController extends Controller
             ->orderBy('name', 'asc')
             ->get();
             
-        $subjects = Subject::orderBy('code', 'asc')->get();
+        $subjects = Subject::whereNotNull('order')->orderBy('order', 'asc')->get();
 
         // Fetch existing grades
         $existingGrades = \DB::table('rapors')
@@ -105,7 +105,7 @@ class ReportController extends Controller
             ->orderBy('name', 'asc')
             ->get();
             
-        $subjects = Subject::orderBy('code', 'asc')->get();
+        $subjects = Subject::whereNotNull('order')->orderBy('order', 'asc')->get();
         
         $existingGrades = \DB::table('rapors')
             ->where('semester_id', $semester->id)
@@ -159,7 +159,7 @@ class ReportController extends Controller
             ->orderBy('name', 'asc')
             ->get();
             
-        $subjects = Subject::orderBy('code', 'asc')->get();
+        $subjects = Subject::whereNotNull('order')->orderBy('order', 'asc')->get();
 
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
