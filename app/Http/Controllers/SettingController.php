@@ -12,7 +12,9 @@ class SettingController extends Controller
     public function website()
     {
         $settings = Setting::whereIn('key', ['website_name', 'website_logo'])->get()->pluck('value', 'key');
-        return view('settings.website', compact('settings'));
+        $schoolProfile = \Illuminate\Support\Facades\DB::table('school_profiles')->first();
+        $kepalaSekolah = \Illuminate\Support\Facades\DB::table('teachers')->where('position', 'Kepala Sekolah')->first();
+        return view('settings.website', compact('settings', 'schoolProfile', 'kepalaSekolah'));
     }
 
     public function websiteUpdate(Request $request)
@@ -20,6 +22,10 @@ class SettingController extends Controller
         $request->validate([
             'website_name' => 'nullable|string|max:255',
             'website_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'nama_sekolah' => 'nullable|string|max:255',
+            'alamat_sekolah' => 'nullable|string',
+            'kepala_sekolah_name' => 'nullable|string|max:255',
+            'kepala_sekolah_nip' => 'nullable|string|max:255',
         ]);
 
         if ($request->has('website_name')) {
@@ -30,6 +36,42 @@ class SettingController extends Controller
             $file = $request->file('website_logo');
             $base64 = 'data:' . $file->getMimeType() . ';base64,' . base64_encode(file_get_contents($file));
             Setting::updateOrCreate(['key' => 'website_logo'], ['value' => $base64]);
+        }
+
+        $profile = \Illuminate\Support\Facades\DB::table('school_profiles')->first();
+        if ($profile) {
+            \Illuminate\Support\Facades\DB::table('school_profiles')->where('id', $profile->id)->update([
+                'name' => $request->nama_sekolah,
+                'address' => $request->alamat_sekolah,
+                'updated_at' => now(),
+            ]);
+        } else {
+            \Illuminate\Support\Facades\DB::table('school_profiles')->insert([
+                'name' => $request->nama_sekolah,
+                'address' => $request->alamat_sekolah,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        $kepsek = \Illuminate\Support\Facades\DB::table('teachers')->where('position', 'Kepala Sekolah')->first();
+        if ($kepsek) {
+            \Illuminate\Support\Facades\DB::table('teachers')->where('id', $kepsek->id)->update([
+                'name' => $request->kepala_sekolah_name,
+                'nip' => $request->kepala_sekolah_nip,
+                'updated_at' => now(),
+            ]);
+        } else {
+            if ($request->kepala_sekolah_name || $request->kepala_sekolah_nip) {
+                \Illuminate\Support\Facades\DB::table('teachers')->insert([
+                    'name' => $request->kepala_sekolah_name ?? '',
+                    'nip' => $request->kepala_sekolah_nip,
+                    'position' => 'Kepala Sekolah',
+                    'is_active' => 1,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
         }
 
         return redirect()->back()->with('success', 'Pengaturan Website berhasil diperbarui.');

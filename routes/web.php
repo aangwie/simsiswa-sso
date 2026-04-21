@@ -11,6 +11,7 @@ use App\Http\Controllers\SettingController;
 
 use App\Http\Controllers\SemesterController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SklController;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -39,6 +40,17 @@ Route::middleware('auth')->group(function () {
     Route::get('reports/{class}/import-template', [ReportController::class, 'importTemplate'])->name('reports.import-template');
     Route::post('reports/{class}/import-excel', [ReportController::class, 'importExcel'])->name('reports.import-excel');
     Route::resource('subjects', SubjectController::class);
+
+    // Cetak SKL
+    Route::get('skl/cetak', [SklController::class, 'cetakIndex'])->name('skl.cetak.index');
+    Route::post('skl/cetak/settings', [SklController::class, 'saveCetakSettings'])->name('skl.cetak.settings');
+    Route::get('skl/cetak/{class}', [SklController::class, 'cetakShow'])->name('skl.cetak.show');
+    Route::get('skl/cetak/pdf/{student}', [SklController::class, 'cetakPdf'])->name('skl.cetak.pdf');
+
+    // SKL
+    Route::get('skl', [SklController::class, 'index'])->name('skl.index');
+    Route::get('skl/{class}', [SklController::class, 'show'])->name('skl.show');
+    Route::get('skl/{class}/export-excel', [SklController::class, 'exportExcel'])->name('skl.export-excel');
 
     // Settings
     Route::get('settings/website', [SettingController::class, 'website'])->name('settings.website');

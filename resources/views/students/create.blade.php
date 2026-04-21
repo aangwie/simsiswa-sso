@@ -67,6 +67,12 @@
                 </select>
             </div>
 
+            <!-- Tempat Lahir -->
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Tempat Lahir</label>
+                <input type="text" name="tempat_lahir" value="{{ old('tempat_lahir') }}" class="w-full rounded-xl border-slate-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-4 py-2">
+            </div>
+
             <!-- Tanggal Lahir -->
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Tanggal Lahir</label>

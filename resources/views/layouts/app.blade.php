@@ -44,7 +44,7 @@
         sidebarOpen: false, 
         sidebarMinimized: false,
         manajemenOpen: {{ request()->routeIs('students.*', 'classes.*', 'subjects.*') ? 'true' : 'false' }},
-        raporOpen: {{ request()->routeIs('semesters.*', 'reports.*') ? 'true' : 'false' }}
+        raporOpen: {{ request()->routeIs('semesters.*', 'reports.*', 'skl.*') ? 'true' : 'false' }}
       }">
 
     <!-- Mobile sidebar backdrop -->
@@ -213,6 +213,10 @@
                     <a href="{{ route('reports.index') }}"
                         class="block py-2 text-sm {{ request()->routeIs('reports.*') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">Nilai
                         Rapor</a>
+                    <a href="{{ route('skl.index') }}"
+                        class="block py-2 text-sm {{ request()->routeIs('skl.index', 'skl.show') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">SKL</a>
+                    <a href="{{ route('skl.cetak.index') }}"
+                        class="block py-2 text-sm {{ request()->routeIs('skl.cetak.*') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">Cetak SKL</a>
                 </div>
 
                 <!-- Floating Tooltip for Minimized Sidebar -->
@@ -223,6 +227,10 @@
                     <a href="{{ route('reports.index') }}"
                         class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">Nilai
                         Rapor</a>
+                    <a href="{{ route('skl.index') }}"
+                        class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">SKL</a>
+                    <a href="{{ route('skl.cetak.index') }}"
+                        class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">Cetak SKL</a>
                 </div>
             </div>
 

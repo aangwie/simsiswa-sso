@@ -4,7 +4,7 @@
 @section('header', 'Pengaturan Website')
 
 @section('content')
-    <div class="space-y-8 max-w-4xl mx-auto">
+    <div class="space-y-8 max-w-6xl mx-auto">
         <!-- Success Alert -->
         @if(session('success'))
             <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-xl shadow-sm animate-fade-in-down">
@@ -61,48 +61,104 @@
                 class="p-6 space-y-8">
                 @csrf
 
-                <div class="space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <!-- Website Name -->
-                        <div class="space-y-2">
-                            <label class="block text-xs font-semibold text-slate-700 tracking-wide uppercase">Nama
-                                Website</label>
-                            <input type="text" name="website_name" value="{{ $settings['website_name'] ?? 'SIMSiswa' }}"
-                                placeholder="Contoh: SIMSiswa SMP XYZ"
-                                class="w-full rounded-xl border-slate-200 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-sm">
-                            <p class="text-[10px] text-slate-400 mt-1">Nama ini akan ditampilkan pada judul halaman, logo
-                                samping, dan di seluruh sistem.</p>
+                <div class="space-y-8">
+                    <!-- Seksi: Informasi Website -->
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">Informasi Website</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <!-- Website Name -->
+                            <div class="space-y-2">
+                                <label class="block text-xs font-semibold text-slate-700 tracking-wide uppercase">Nama
+                                    Website</label>
+                                <input type="text" name="website_name" value="{{ $settings['website_name'] ?? 'SIMSiswa' }}"
+                                    placeholder="Contoh: SIMSiswa SMP XYZ"
+                                    class="w-full sm:w-3/4 rounded-xl border-slate-200 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-sm">
+                                <p class="text-[10px] text-slate-400 mt-1">Nama ini akan ditampilkan pada judul halaman, logo
+                                    samping, dan di seluruh sistem.</p>
+                            </div>
+
+                            <!-- Website Logo -->
+                            <div class="space-y-4">
+                                <label class="block text-xs font-semibold text-slate-700 tracking-wide uppercase">Logo Website /
+                                    Favicon</label>
+
+                                <div class="flex items-start gap-4 flex-col sm:flex-row">
+                                    <div class="w-20 h-20 shrink-0 rounded-2xl bg-slate-50 border border-slate-200 shadow-inner flex items-center justify-center overflow-hidden"
+                                        id="logo-preview-container">
+                                        @if(!empty($settings['website_logo']))
+                                            <img src="{{ $settings['website_logo'] }}" alt="Logo Preview"
+                                                class="w-full h-full object-contain p-2" id="logo-preview-img">
+                                        @else
+                                            <svg class="h-8 w-8 text-slate-300" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor" id="logo-preview-svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                            <img src="#" alt="Logo Preview" class="hidden w-full h-full object-contain p-2"
+                                                id="logo-preview-img">
+                                        @endif
+                                    </div>
+
+                                    <div class="flex-1 space-y-2">
+                                        <input type="file" name="website_logo" id="website_logo" accept="image/*"
+                                            class="w-full sm:w-3/4 text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition-colors"
+                                            onchange="previewLogo(this)">
+                                        <p class="text-[10px] text-slate-400">Rekomendasi rasio 1:1, transparan (PNG). Ukuran
+                                            maksimal 2MB. Ganti logo jika diperlukan.</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                    </div>
 
-                        <!-- Website Logo -->
-                        <div class="space-y-4">
-                            <label class="block text-xs font-semibold text-slate-700 tracking-wide uppercase">Logo Website /
-                                Favicon</label>
+                    <!-- Seksi: Profil Sekolah -->
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">Profil Sekolah</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <!-- Nama Sekolah -->
+                            <div class="space-y-2 md:col-span-2">
+                                <label class="block text-xs font-semibold text-slate-700 tracking-wide uppercase">Nama
+                                    Sekolah</label>
+                                <input type="text" name="nama_sekolah"
+                                    value="{{ old('nama_sekolah', $schoolProfile->name ?? 'SMP Negeri 6 Sudimoro') }}"
+                                    placeholder="Contoh: SMP Negeri 6 Sudimoro"
+                                    class="w-full md:w-3/4 rounded-xl border-slate-200 bg-slate-50 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-sm"
+                                    readonly>
+                            </div>
 
-                            <div class="flex items-start gap-6">
-                                <div class="w-20 h-20 shrink-0 rounded-2xl bg-slate-50 border border-slate-200 shadow-inner flex items-center justify-center overflow-hidden"
-                                    id="logo-preview-container">
-                                    @if(!empty($settings['website_logo']))
-                                        <img src="{{ $settings['website_logo'] }}" alt="Logo Preview"
-                                            class="w-full h-full object-contain p-2" id="logo-preview-img">
-                                    @else
-                                        <svg class="h-8 w-8 text-slate-300" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor" id="logo-preview-svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                        </svg>
-                                        <img src="#" alt="Logo Preview" class="hidden w-full h-full object-contain p-2"
-                                            id="logo-preview-img">
-                                    @endif
-                                </div>
+                            <!-- Alamat Sekolah -->
+                            <div class="space-y-2 md:col-span-2">
+                                <label class="block text-xs font-semibold text-slate-700 tracking-wide uppercase">Alamat
+                                    Sekolah</label>
+                                <textarea name="alamat_sekolah" rows="2" placeholder="Masukkan alamat lengkap sekolah"
+                                    class="w-full md:w-3/4 rounded-xl border-slate-200 bg-slate-50 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-sm"
+                                    readonly>{{ old('alamat_sekolah', $schoolProfile->address ?? '') }}</textarea>
+                            </div>
+                        </div>
+                    </div>
 
-                                <div class="flex-1 space-y-2">
-                                    <input type="file" name="website_logo" id="website_logo" accept="image/*"
-                                        class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition-colors"
-                                        onchange="previewLogo(this)">
-                                    <p class="text-[10px] text-slate-400">Rekomendasi rasio 1:1, transparan (PNG). Ukuran
-                                        maksimal 2MB. Gambar akan otomatis di-convert ke base64.</p>
-                                </div>
+                    <!-- Seksi: Kepala Sekolah -->
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">Kepala Sekolah</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <!-- Nama Kepala Sekolah -->
+                            <div class="space-y-2">
+                                <label class="block text-xs font-semibold text-slate-700 tracking-wide uppercase">Nama Kepala
+                                    Sekolah</label>
+                                <input type="text" name="kepala_sekolah_name"
+                                    value="{{ old('kepala_sekolah_name', $kepalaSekolah->name ?? '') }}"
+                                    placeholder="Contoh: Budi Santoso, S.Pd"
+                                    class="w-full sm:w-3/4 rounded-xl border-slate-200 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-sm">
+                            </div>
+
+                            <!-- NIP Kepala Sekolah -->
+                            <div class="space-y-2">
+                                <label class="block text-xs font-semibold text-slate-700 tracking-wide uppercase">NIP Kepala
+                                    Sekolah</label>
+                                <input type="text" name="kepala_sekolah_nip"
+                                    value="{{ old('kepala_sekolah_nip', $kepalaSekolah->nip ?? '') }}"
+                                    placeholder="Contoh: 19800101 200501 1 001"
+                                    class="w-full sm:w-3/4 rounded-xl border-slate-200 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-sm">
                             </div>
                         </div>
                     </div>
