@@ -26,7 +26,7 @@
         </div>
         <div>
             <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Tanggal Lahir</p>
-            <p class="text-slate-700 font-medium">{{ $student->tanggal_lahir ? (\Carbon\Carbon::parse($student->tanggal_lahir)->translatedFormat('d F Y')) : '-' }}</p>
+            <p class="text-slate-700 font-medium">{{ $student->tanggal_lahir ? (\Carbon\Carbon::parse($student->tanggal_lahir)->locale('id')->translatedFormat('d F Y')) : '-' }}</p>
         </div>
         <div>
             <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Status Keaktifan</p>
