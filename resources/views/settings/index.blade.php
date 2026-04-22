@@ -60,7 +60,7 @@
             <div class="space-y-4">
                 <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest border-b border-slate-50 pb-2">Pengaturan Umum</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    @foreach($settings->whereNotIn('key', ['github_token', 'github_repo_url', 'github_branch', 'github_update_command']) as $setting)
+                    @foreach($settings->whereIn('key', ['tempat_cetak', 'tanggal_cetak', 'nomor_skl']) as $setting)
                     <div class="space-y-1">
                         <label class="block text-xs font-semibold text-slate-700 tracking-wide uppercase">
                             {{ str_replace('_', ' ', $setting->key) }}
