@@ -267,15 +267,15 @@ class SklController extends Controller
     {
         $request->validate([
             'identifier' => 'required|string',
-            'tanggal_lahir' => 'required|date',
+            'tanggal_lahir' => 'required|date_format:d/m/Y',
         ], [
             'identifier.required' => 'NIS/NISN wajib diisi.',
             'tanggal_lahir.required' => 'Tanggal lahir wajib diisi.',
-            'tanggal_lahir.date' => 'Format tanggal lahir tidak valid.',
+            'tanggal_lahir.date_format' => 'Format tanggal lahir harus dd/mm/yyyy.',
         ]);
 
         $identifier = $request->identifier;
-        $tanggalLahir = $request->tanggal_lahir;
+        $tanggalLahir = \Carbon\Carbon::createFromFormat('d/m/Y', $request->tanggal_lahir)->format('Y-m-d');
 
         // Cari siswa berdasarkan NIS atau NISN
         $student = Student::where(function ($query) use ($identifier) {

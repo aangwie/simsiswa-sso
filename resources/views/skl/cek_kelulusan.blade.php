@@ -152,8 +152,9 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                             </div>
-                            <input id="tanggal_lahir" name="tanggal_lahir" type="date" required value="{{ old('tanggal_lahir') }}"
-                                class="block w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-indigo-300/30 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 text-sm transition-all backdrop-blur-sm [color-scheme:dark]">
+                            <input id="tanggal_lahir" name="tanggal_lahir" type="text" required value="{{ old('tanggal_lahir') }}"
+                                class="block w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-indigo-300/30 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 text-sm transition-all backdrop-blur-sm [color-scheme:dark]"
+                                placeholder="dd/mm/yyyy" pattern="\d{2}/\d{2}/\d{4}">
                         </div>
                     </div>
 
@@ -181,5 +182,26 @@
         <p class="text-sm text-indigo-300/30">&copy; {{ date('Y') }} {{ $websiteName }}. All rights reserved.</p>
     </footer>
 
+    <script>
+        document.getElementById('tanggal_lahir').addEventListener('input', function (e) {
+            // Prevent re-formatting if the user is deleting characters so they can delete slashes
+            if (e.inputType === 'deleteContentBackward') {
+                return;
+            }
+            
+            let input = e.target.value.replace(/\D/g, '').substring(0, 8);
+            let formatted = '';
+            
+            if (input.length > 4) {
+                formatted = input.substring(0, 2) + '/' + input.substring(2, 4) + '/' + input.substring(4, 8);
+            } else if (input.length > 2) {
+                formatted = input.substring(0, 2) + '/' + input.substring(2, 4);
+            } else {
+                formatted = input;
+            }
+            
+            e.target.value = formatted;
+        });
+    </script>
 </body>
 </html>

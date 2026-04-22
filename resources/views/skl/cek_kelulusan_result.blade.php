@@ -61,7 +61,7 @@
         }
     </style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 flex flex-col relative overflow-x-hidden text-white">
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 flex flex-col relative overflow-x-hidden text-white" x-data="{ showSklModal: false }">
 
     <!-- Animated background elements -->
     <div class="fixed inset-0 pointer-events-none overflow-hidden">
@@ -183,6 +183,14 @@
                 <!-- Actions -->
                 <div class="px-8 pb-8 space-y-3">
                     @if($isLulus)
+                        <button type="button" @click="showSklModal = true" class="w-full flex justify-center items-center gap-2.5 py-3.5 px-4 rounded-2xl text-sm font-bold text-white bg-white/10 border border-white/20 hover:bg-white/20 hover:border-white/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white/50 focus:ring-offset-slate-900 transition-all duration-300 transform hover:-translate-y-0.5 shadow-xl shadow-black/10">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                            Lihat SKL
+                        </button>
+
                         <a href="{{ route('skl.cetak.pdf', $student->id) }}" target="_blank" id="btn-download-skl" class="w-full flex justify-center items-center gap-2.5 py-3.5 px-4 rounded-2xl text-sm font-bold text-white bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 focus:ring-offset-slate-900 transition-all duration-300 transform hover:-translate-y-0.5 shadow-xl shadow-emerald-500/30 hover:shadow-emerald-500/50">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -208,6 +216,30 @@
     </footer>
 
     @if($isLulus)
+    <!-- Modal SKL -->
+    <div x-show="showSklModal" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6" x-transition.opacity>
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm" @click="showSklModal = false"></div>
+        
+        <!-- Modal Panel -->
+        <div class="relative w-full max-w-4xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[85vh]" x-transition.scale.origin.bottom>
+            <!-- Header -->
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50">
+                <h3 class="text-lg font-bold text-slate-800">Pratinjau Surat Keterangan Lulus</h3>
+                <button type="button" @click="showSklModal = false" class="text-slate-400 hover:text-red-500 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Body / Iframe -->
+            <div class="flex-1 bg-slate-100 p-2">
+                <iframe src="{{ route('skl.cetak.pdf', $student->id) }}" class="w-full h-full rounded-xl border-0 shadow-inner"></iframe>
+            </div>
+        </div>
+    </div>
+
     <!-- Confetti animation for graduated students -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
