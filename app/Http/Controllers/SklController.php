@@ -34,19 +34,24 @@ class SklController extends Controller
             ->where('school_class_id', $class->id)
             ->get();
             
+        // Aggregate: jumlahkan seluruh nilai mapel X dari siswa Y, lalu bagi jumlah semester yang diikuti
         $aggregatedGrades = [];
         foreach ($existingGradesRaw as $grade) {
             $key = $grade->student_id . '_' . $grade->subject_id;
             if (!isset($aggregatedGrades[$key])) {
-                $aggregatedGrades[$key] = ['total' => 0, 'count' => 0];
+                $aggregatedGrades[$key] = ['total' => 0, 'semesters' => []];
             }
             $aggregatedGrades[$key]['total'] += floatval($grade->grade);
-            $aggregatedGrades[$key]['count']++;
+            // Track distinct semesters
+            if (!in_array($grade->semester_id, $aggregatedGrades[$key]['semesters'])) {
+                $aggregatedGrades[$key]['semesters'][] = $grade->semester_id;
+            }
         }
         
         $existingGrades = [];
         foreach ($aggregatedGrades as $key => $data) {
-            $existingGrades[$key] = (object) ['grade' => $data['count'] > 0 ? ($data['total'] / $data['count']) : 0];
+            $semesterCount = count($data['semesters']);
+            $existingGrades[$key] = (object) ['grade' => $semesterCount > 0 ? ($data['total'] / $semesterCount) : 0];
         }
 
         return view('skl.show', compact('class', 'students', 'subjects', 'existingGrades'));
@@ -62,24 +67,28 @@ class SklController extends Controller
             ->get();
             
         $subjects = Subject::whereNotNull('order')->orderBy('order', 'asc')->get();
-        
+
         $existingGradesRaw = \DB::table('rapors')
             ->where('school_class_id', $class->id)
             ->get();
             
+        // Aggregate: jumlahkan seluruh nilai mapel X dari siswa Y, lalu bagi jumlah semester yang diikuti
         $aggregatedGrades = [];
         foreach ($existingGradesRaw as $grade) {
             $key = $grade->student_id . '_' . $grade->subject_id;
             if (!isset($aggregatedGrades[$key])) {
-                $aggregatedGrades[$key] = ['total' => 0, 'count' => 0];
+                $aggregatedGrades[$key] = ['total' => 0, 'semesters' => []];
             }
             $aggregatedGrades[$key]['total'] += floatval($grade->grade);
-            $aggregatedGrades[$key]['count']++;
+            if (!in_array($grade->semester_id, $aggregatedGrades[$key]['semesters'])) {
+                $aggregatedGrades[$key]['semesters'][] = $grade->semester_id;
+            }
         }
         
         $existingGrades = [];
         foreach ($aggregatedGrades as $key => $data) {
-            $existingGrades[$key] = (object) ['grade' => $data['count'] > 0 ? ($data['total'] / $data['count']) : 0];
+            $semesterCount = count($data['semesters']);
+            $existingGrades[$key] = (object) ['grade' => $semesterCount > 0 ? ($data['total'] / $semesterCount) : 0];
         }
 
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
@@ -213,12 +222,10 @@ class SklController extends Controller
         
         foreach ($subjects as $subject) {
             $subjectGrades = $existingGradesRaw->where('subject_id', $subject->id);
-            $count = $subjectGrades->count();
-            if ($count > 0) {
-                $avg = $subjectGrades->sum('grade') / $count;
-            } else {
-                $avg = 0;
-            }
+            $total = $subjectGrades->sum('grade');
+            // Jumlah semester yang diikuti siswa untuk mapel ini
+            $semesterCount = $subjectGrades->pluck('semester_id')->unique()->count();
+            $avg = $semesterCount > 0 ? ($total / $semesterCount) : 0;
             
             $existingGrades[$subject->id] = (object) ['grade' => $avg];
             
@@ -243,5 +250,73 @@ class SklController extends Controller
         $pdf = Pdf::loadView('skl.pdf', compact('student', 'class', 'subjects', 'existingGrades', 'tempatCetak', 'tanggalCetak', 'nomorSkl', 'websiteLogo', 'websiteName', 'kepalaSekolah', 'average', 'isLulus', 'schoolProfile'));
         
         return $pdf->stream('SKL_' . $student->nis . '_' . $student->name . '.pdf');
+    }
+
+    /**
+     * Public page: Form cek kelulusan siswa
+     */
+    public function cekKelulusan()
+    {
+        return view('skl.cek_kelulusan');
+    }
+
+    /**
+     * Public page: Verifikasi NIS/NISN + tanggal lahir, tampilkan hasil kelulusan
+     */
+    public function cekKelulusanCheck(Request $request)
+    {
+        $request->validate([
+            'identifier' => 'required|string',
+            'tanggal_lahir' => 'required|date',
+        ], [
+            'identifier.required' => 'NIS/NISN wajib diisi.',
+            'tanggal_lahir.required' => 'Tanggal lahir wajib diisi.',
+            'tanggal_lahir.date' => 'Format tanggal lahir tidak valid.',
+        ]);
+
+        $identifier = $request->identifier;
+        $tanggalLahir = $request->tanggal_lahir;
+
+        // Cari siswa berdasarkan NIS atau NISN
+        $student = Student::where(function ($query) use ($identifier) {
+            $query->where('nis', $identifier)
+                  ->orWhere('nisn', $identifier);
+        })
+        ->where('tanggal_lahir', $tanggalLahir)
+        ->first();
+
+        if (!$student) {
+            return redirect()->route('cek-kelulusan')
+                ->withErrors(['identifier' => 'Data siswa tidak ditemukan. Pastikan NIS/NISN dan tanggal lahir sudah benar.'])
+                ->withInput();
+        }
+
+        // Hitung rata-rata nilai per mapel (sama seperti di cetakPdf)
+        $subjects = Subject::whereNotNull('order')->orderBy('order', 'asc')->get();
+
+        $existingGradesRaw = \DB::table('rapors')
+            ->where('student_id', $student->id)
+            ->get();
+
+        $existingGrades = [];
+        $totalGrade = 0;
+        $countGrade = 0;
+
+        foreach ($subjects as $subject) {
+            $subjectGrades = $existingGradesRaw->where('subject_id', $subject->id);
+            $total = $subjectGrades->sum('grade');
+            $semesterCount = $subjectGrades->pluck('semester_id')->unique()->count();
+            $avg = $semesterCount > 0 ? ($total / $semesterCount) : 0;
+
+            $existingGrades[$subject->id] = (object) ['grade' => $avg];
+
+            $totalGrade += $avg;
+            $countGrade++;
+        }
+        $average = $countGrade > 0 ? ($totalGrade / $countGrade) : 0;
+
+        $isLulus = $average >= 65;
+
+        return view('skl.cek_kelulusan_result', compact('student', 'subjects', 'existingGrades', 'average', 'isLulus'));
     }
 }

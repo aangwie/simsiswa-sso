@@ -14,8 +14,12 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SklController;
 
 Route::get('/', function () {
-    return redirect('/login');
+    return redirect('/cek-kelulusan');
 });
+
+// Public: Cek Kelulusan
+Route::get('/cek-kelulusan', [SklController::class, 'cekKelulusan'])->name('cek-kelulusan');
+Route::post('/cek-kelulusan/check', [SklController::class, 'cekKelulusanCheck'])->name('cek-kelulusan.check');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');

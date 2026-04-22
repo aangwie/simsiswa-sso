@@ -12,6 +12,7 @@
             <h2 class="text-lg font-bold text-slate-800">
                 Data SKL Kumulatif Kelas {{ $class->name }}
             </h2>
+            <p class="text-xs text-slate-500 mt-1">Rata-rata = Total Nilai Mapel / Jumlah Semester yang Diikuti</p>
         </div>
         
         <!-- Action Buttons -->
@@ -69,19 +70,19 @@
                             @foreach($subjects as $subject)
                                 @php
                                     $key = $student->id . '_' . $subject->id;
-                                    $gradeValue = isset($existingGrades[$key]) ? floatval($existingGrades[$key]->grade) : 0;
+                                    $gradeValue = isset($existingGrades[$key]) ? round(floatval($existingGrades[$key]->grade), 2) : 0;
                                     $totalGrade += $gradeValue;
                                     $countGrade++;
                                 @endphp
                                 <td class="px-1 py-1 border-r border-slate-200 text-center font-medium text-slate-600">
-                                    {{ $gradeValue > 0 ? $gradeValue : '-' }}
+                                    {{ $gradeValue > 0 ? number_format($gradeValue, 2) : '-' }}
                                 </td>
                             @endforeach
                             @php
                                 $average = $countGrade > 0 ? round($totalGrade / $countGrade, 2) : 0;
                             @endphp
                             <td class="px-4 py-2 border-r border-slate-200 text-center font-bold text-indigo-600 bg-indigo-50/30">
-                                {{ $average }}
+                                {{ number_format($average, 2) }}
                             </td>
                         </tr>
                     @empty
