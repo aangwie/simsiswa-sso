@@ -11,140 +11,174 @@
         }
         .container {
             width: 100%;
-            padding: 20px;
+            padding: 10px;
         }
         .card {
-            width: 323px; /* 8.56 cm */
-            height: 204px; /* 5.39 cm */
+            width: 11.5cm;
+            height: 6.9cm;
             display: inline-block;
             margin-right: 15px;
+            margin-bottom: 20px;
             border: 1px solid #999;
-            border-radius: 8px;
+            border-radius: 9px;
             overflow: hidden;
-            background-color: #d8f0f8; /* Light blue */
+            background: #e0f7fa; /* Fallback for wkhtmltopdf */
+            background: -webkit-linear-gradient(top left, #e0f7fa 0%, #b3e5fc 40%, #ffffff 100%);
+            background: linear-gradient(135deg, #e0f7fa 0%, #b3e5fc 40%, #ffffff 100%);
             vertical-align: top;
             box-sizing: border-box;
             position: relative;
         }
 
+        /* Watermark */
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.1;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .watermark img {
+            width: 200px;
+        }
+
         /* Front Card */
         .front-header {
             width: 100%;
-            padding: 5px 8px;
+            padding: 6px 9px;
             box-sizing: border-box;
+            position: relative;
+            z-index: 10;
         }
         .logo-kemdikbud {
             float: left;
-            width: 150px;
+            width: 172px;
         }
         .logo-img {
             float: left;
-            height: 25px;
-            margin-right: 5px;
+            height: 29px;
+            margin-right: 6px;
         }
         .logo-text {
             float: left;
-            margin-top: 2px;
+            margin-top: 3px;
             line-height: 1;
         }
-        .text-blue { color: #00a8e8; font-weight: bold; font-size: 11px; }
-        .text-orange { color: #f39c12; font-weight: bold; font-size: 11px; }
-        .text-small { font-size: 5px; color: #555; display: block; margin-top: 1px; }
+        .text-blue { color: #00a8e8; font-weight: bold; font-size: 13px; }
+        .text-orange { color: #f39c12; font-weight: bold; font-size: 13px; }
+        .text-small { font-size: 6px; color: #555; display: block; margin-top: 2px; }
 
         .title-box {
             float: right;
             text-align: center;
             line-height: 1.1;
         }
-        .title-main { color: #2980b9; font-size: 13px; font-weight: bold; margin: 0; }
-        .title-sub { color: #444; font-size: 7px; margin: 0; }
+        .title-main { color: #2980b9; font-size: 15px; font-weight: bold; margin: 0; }
+        .title-sub { color: #444; font-size: 8px; margin: 0; }
         
         .clear { clear: both; }
 
         .front-content {
             width: 100%;
-            padding: 5px 10px;
+            padding: 6px 11px;
             box-sizing: border-box;
+            position: relative;
+            z-index: 10;
         }
 
-        .student-photo {
+        .left-section {
             float: left;
-            width: 55px;
-            height: 75px;
-            background: #fff;
-            border: 1px solid #ccc;
+            width: 86px;
             text-align: center;
-            box-sizing: border-box;
-            padding-top: 15px;
         }
-        .student-photo img { width: 35px; }
-        .student-photo .nisn-label { font-size: 8px; font-weight: bold; color: #2980b9; margin-top: 5px; }
+        .nisn-logo {
+            width: 52px;
+            margin-bottom: 3px;
+        }
+        .user-photo {
+            width: 86px;
+            height: 109px;
+            border: 1px solid #ccc;
+            background: #fff;
+            padding: 2px;
+            box-sizing: border-box;
+            object-fit: cover;
+            opacity: 0.5;
+        }
 
         .student-data {
             float: left;
-            width: 170px;
-            margin-left: 10px;
+            width: 247px;
+            margin-left: 17px;
+            margin-top: 29px;
         }
         .student-data table {
             width: 100%;
-            font-size: 9px;
+            font-size: 11px;
             border-collapse: collapse;
             color: #111;
         }
-        .student-data td { padding: 2px 0; vertical-align: top; }
-        .col-label { width: 65px; }
+        .student-data td { padding: 3px 0; vertical-align: top; }
+        .col-label { width: 86px; }
 
-        .qr-box {
+        .qr-bottom-right {
             position: absolute;
-            bottom: 10px;
-            right: 10px;
-            width: 50px;
-            height: 50px;
+            bottom: 12px;
+            right: 12px;
+            width: 57px;
+            height: 57px;
             background: #fff;
             padding: 2px;
             box-sizing: border-box;
             border: 1px solid #ccc;
         }
+        .qr-bottom-right img { width: 100%; height: 100%; }
 
-        .front-footer {
+        .dapodik-bottom-center {
             position: absolute;
-            bottom: 5px;
-            left: 10px;
-            line-height: 1.1;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 103px;
         }
+        .dapodik-bottom-center img { width: 100%; }
 
         /* Back Card */
         .back-top {
             text-align: center;
-            padding-top: 15px;
+            padding-top: 17px;
             line-height: 1.1;
         }
-        .back-top img { height: 40px; margin-bottom: 3px; }
-        .back-top .text-small { font-size: 6px; }
+        .back-top img { height: 46px; margin-bottom: 3px; }
+        .back-top .text-small { font-size: 7px; }
         
         .back-bar {
             background-color: #6a7f7c;
             color: #fff;
             text-align: center;
-            padding: 6px 0;
-            margin-top: 15px;
+            padding: 7px 0;
+            margin-top: 17px;
             line-height: 1.2;
         }
-        .back-bar-main { font-size: 13px; font-weight: bold; margin: 0; letter-spacing: 1px; }
-        .back-bar-sub { font-size: 7px; margin: 0; }
+        .back-bar-main { font-size: 15px; font-weight: bold; margin: 0; letter-spacing: 1px; }
+        .back-bar-sub { font-size: 8px; margin: 0; }
 
         .back-links {
             text-align: center;
-            font-size: 8px;
+            font-size: 10px;
             color: #444;
-            margin-top: 12px;
-            line-height: 1.3;
+            margin-top: 17px;
+            line-height: 1.4;
         }
         
-        .back-footer {
+        .back-dapodik {
             text-align: center;
-            margin-top: 15px;
-            line-height: 1.1;
+            margin-top: 20px;
+        }
+        .back-dapodik img {
+            width: 103px;
         }
     </style>
 </head>
@@ -162,14 +196,26 @@
         $qrContent = @file_get_contents($qrUrl, false, $qrContext);
         $qrSrc = $qrContent ? 'data:image/png;base64,' . base64_encode($qrContent) : '';
 
-        // Simple User SVG profile
-        $userSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="2"/><circle cx="50" cy="35" r="15" fill="#95a5a6"/><path d="M20 80c0-15 15-25 30-25s30 10 30 25v5H20v-5z" fill="#95a5a6"/></svg>';
-        $userAvatarSrc = 'data:image/svg+xml;base64,' . base64_encode($userSvg);
+        $dapodikPath = base_path('raw/dapodik.png');
+        $dapodikData = file_exists($dapodikPath) ? base64_encode(file_get_contents($dapodikPath)) : '';
+        $dapodikSrc = 'data:image/png;base64,' . $dapodikData;
+
+        $nisnLogPath = base_path('raw/nisn.png');
+        $nisnLogData = file_exists($nisnLogPath) ? base64_encode(file_get_contents($nisnLogPath)) : '';
+        $nisnLogSrc = 'data:image/png;base64,' . $nisnLogData;
+
+        $userPath = base_path('raw/user.png');
+        $userData = file_exists($userPath) ? base64_encode(file_get_contents($userPath)) : '';
+        $userSrc = 'data:image/png;base64,' . $userData;
     @endphp
 
     <div class="container">
         <!-- FRONT CARD -->
         <div class="card">
+            <div class="watermark">
+                <img src="{{ $logoSrc }}">
+            </div>
+
             <!-- Header -->
             <div class="front-header">
                 <div class="logo-kemdikbud">
@@ -188,9 +234,9 @@
 
             <!-- Content -->
             <div class="front-content">
-                <div class="student-photo">
-                    <img src="{{ $userAvatarSrc }}">
-                    <div class="nisn-label">NISN</div>
+                <div class="left-section">
+                    <img src="{{ $nisnLogSrc }}" class="nisn-logo">
+                    <img src="{{ $userSrc }}" class="user-photo">
                 </div>
 
                 <div class="student-data">
@@ -201,7 +247,7 @@
                         </tr>
                         <tr>
                             <td>Nama</td>
-                            <td>: {{ substr($student->name, 0, 25) }}</td>
+                            <td>: {{ $student->name }}</td>
                         </tr>
                         <tr>
                             <td>Tempat Lahir</td>
@@ -218,44 +264,42 @@
                     </table>
                 </div>
 
-                <div class="qr-box">
-                    <img src="{{ $qrSrc }}" style="width: 100%; height: 100%;">
+                <div class="clear"></div>
+                
+                <div class="qr-bottom-right">
+                    <img src="{{ $qrSrc }}">
                 </div>
                 
-                <div class="clear"></div>
-            </div>
-
-            <!-- Footer -->
-            <div class="front-footer">
-                <span class="text-blue" style="font-size: 12px; letter-spacing: 0.5px;">DAPODIK</span><br>
-                <span class="text-small">DATA POKOK PENDIDIKAN</span>
+                <div class="dapodik-bottom-center">
+                    <img src="{{ $dapodikSrc }}">
+                </div>
             </div>
         </div>
 
         <!-- BACK CARD -->
         <div class="card">
-            <div class="back-top">
+            <div class="watermark">
+                <img src="{{ $logoSrc }}">
+            </div>
+
+            <div class="back-top" style="position: relative; z-index:10;">
                 <img src="{{ $logoSrc }}"><br>
                 <span class="text-blue" style="font-size:13px;">Kemen</span><span class="text-orange" style="font-size:13px;">dikdasmen</span><br>
                 <span class="text-small" style="font-size:7px;">Pusat Data dan Teknologi Informasi</span>
             </div>
 
-            <div class="back-bar">
+            <div class="back-bar" style="position: relative; z-index:10;">
                 <p class="back-bar-main">KARTU NISN</p>
                 <p class="back-bar-sub">NOMOR INDUK SISWA NASIONAL</p>
             </div>
 
-            <div class="back-links">
+            <div class="back-links" style="position: relative; z-index:10;">
                 Link Resmi NISN :<br>
-                https://nisn.data.kemdikbud.go.id<br><br>
-                didukung oleh :<br>
-                {{ \App\Models\Setting::where('key', 'website_name')->first()?->value ?? 'SIMSiswa' }}
-            </div>
+                https://nisn.data.kemdikdasmen.go.id
+              </div>
 
-            <div class="back-footer">
-                <span class="text-blue" style="font-size: 13px; letter-spacing: 0.5px;">DAPODIK</span><br>
-                <span class="text-small" style="font-size: 6px;">DATA POKOK PENDIDIKAN</span>
-                <span class="text-small" style="font-size: 6px;">dapo.kemdikbud.go.id</span>
+            <div class="back-dapodik" style="position: relative; z-index:10;">
+                <img src="{{ $dapodikSrc }}">
             </div>
         </div>
     </div>

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use App\Models\Setting;
 use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf;
+use Barryvdh\Snappy\Facades\SnappyPdf as Pdf;
 use Carbon\Carbon;
 
 class NisnController extends Controller
@@ -56,8 +56,8 @@ class NisnController extends Controller
     {
         $websiteName = Setting::where('key', 'website_name')->first()?->value ?? 'SIMSiswa';
         $websiteLogo = Setting::where('key', 'website_logo')->first()?->value;
-        $pdf = Pdf::setOptions(['isRemoteEnabled' => true])
-            ->loadView('nisn.pdf', compact('student', 'websiteName', 'websiteLogo'));
+        $pdf = Pdf::loadView('nisn.pdf', compact('student', 'websiteName', 'websiteLogo'))
+            ->setOption('enable-local-file-access', true);
         
         // Custom paper size for ID card (landscape)
         $pdf->setPaper('a4', 'portrait');
