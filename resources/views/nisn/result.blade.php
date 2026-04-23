@@ -79,7 +79,7 @@
                     </div>
                     <div class="grid grid-cols-3 gap-4">
                         <div class="text-indigo-200/70">Jenis Kelamin</div>
-                        <div class="col-span-2 font-semibold">{{ strtolower(substr($student->gender, 0, 1)) == 'p' ? 'Perempuan' : 'Laki-Laki' }}</div>
+                        <div class="col-span-2 font-semibold">{{ strtolower($student->gender) === 'female' ? 'Perempuan' : 'Laki-Laki' }}</div>
                     </div>
                 </div>
 

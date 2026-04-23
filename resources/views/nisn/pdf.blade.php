@@ -195,7 +195,7 @@
                         </tr>
                         <tr>
                             <td>Jenis Kelamin</td>
-                            <td>: {{ strtolower(substr($student->gender, 0, 1)) == 'p' ? 'Perempuan' : 'Laki-Laki' }}</td>
+                            <td>: {{ strtolower($student->gender) === 'female' ? 'Perempuan' : 'Laki-Laki' }}</td>
                         </tr>
                     </table>
                 </div>
