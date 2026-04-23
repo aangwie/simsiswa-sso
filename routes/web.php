@@ -12,14 +12,20 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SemesterController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SklController;
+use App\Http\Controllers\NisnController;
 
 Route::get('/', function () {
-    return redirect('/cek-kelulusan');
+    return view('welcome');
 });
 
 // Public: Cek Kelulusan
 Route::get('/cek-kelulusan', [SklController::class, 'cekKelulusan'])->name('cek-kelulusan');
 Route::post('/cek-kelulusan/check', [SklController::class, 'cekKelulusanCheck'])->name('cek-kelulusan.check');
+
+// Public: Cetak NISN
+Route::get('/cetak-nisn', [NisnController::class, 'index'])->name('cetak-nisn.index');
+Route::post('/cetak-nisn/check', [NisnController::class, 'check'])->name('cetak-nisn.check');
+Route::get('/cetak-nisn/pdf/{student}', [NisnController::class, 'pdf'])->name('cetak-nisn.pdf');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
