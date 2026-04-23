@@ -53,7 +53,7 @@
 
         .title-box {
             float: right;
-            text-align: right;
+            text-align: center;
             line-height: 1.1;
         }
         .title-main { color: #2980b9; font-size: 13px; font-weight: bold; margin: 0; }
@@ -95,13 +95,14 @@
         .col-label { width: 65px; }
 
         .qr-box {
-            float: right;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
             width: 50px;
             height: 50px;
             background: #fff;
             padding: 2px;
             box-sizing: border-box;
-            margin-top: 20px;
             border: 1px solid #ccc;
         }
 
@@ -148,6 +149,23 @@
     </style>
 </head>
 <body>
+    @php
+        $logoPath = public_path('images/Tutwuri.png');
+        $logoData = file_exists($logoPath) ? base64_encode(file_get_contents($logoPath)) : '';
+        $logoSrc = 'data:image/png;base64,' . $logoData;
+
+        $qrUrl = 'https://quickchart.io/qr?text=' . urlencode($student->nisn) . '&size=100&margin=0';
+        $qrContext = stream_context_create([
+            'ssl' => ['verify_peer' => false, 'verify_peer_name' => false],
+            'http' => ['ignore_errors' => true, 'timeout' => 5]
+        ]);
+        $qrContent = @file_get_contents($qrUrl, false, $qrContext);
+        $qrSrc = $qrContent ? 'data:image/png;base64,' . base64_encode($qrContent) : '';
+
+        // Simple User SVG profile
+        $userSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="2"/><circle cx="50" cy="35" r="15" fill="#95a5a6"/><path d="M20 80c0-15 15-25 30-25s30 10 30 25v5H20v-5z" fill="#95a5a6"/></svg>';
+        $userAvatarSrc = 'data:image/svg+xml;base64,' . base64_encode($userSvg);
+    @endphp
 
     <div class="container">
         <!-- FRONT CARD -->
@@ -155,7 +173,7 @@
             <!-- Header -->
             <div class="front-header">
                 <div class="logo-kemdikbud">
-                    <img src="{{ public_path('images/Tutwuri.webp') }}" class="logo-img">
+                    <img src="{{ $logoSrc }}" class="logo-img">
                     <div class="logo-text">
                         <span class="text-blue">Kemen</span><span class="text-orange">dikdasmen</span>
                         <span class="text-small">Kementerian Pendidikan Dasar dan Menengah</span>
@@ -171,7 +189,7 @@
             <!-- Content -->
             <div class="front-content">
                 <div class="student-photo">
-                    <img src="{{ public_path('images/Tutwuri.webp') }}">
+                    <img src="{{ $userAvatarSrc }}">
                     <div class="nisn-label">NISN</div>
                 </div>
 
@@ -201,11 +219,7 @@
                 </div>
 
                 <div class="qr-box">
-                    @php
-                        // Using quickchart.io for reliable QR code generation in DomPDF
-                        $qrUrl = 'https://quickchart.io/qr?text=' . urlencode($student->nisn) . '&size=100&margin=0';
-                    @endphp
-                    <img src="{{ $qrUrl }}" style="width: 100%; height: 100%;">
+                    <img src="{{ $qrSrc }}" style="width: 100%; height: 100%;">
                 </div>
                 
                 <div class="clear"></div>
@@ -221,7 +235,7 @@
         <!-- BACK CARD -->
         <div class="card">
             <div class="back-top">
-                <img src="{{ public_path('images/Tutwuri.webp') }}"><br>
+                <img src="{{ $logoSrc }}"><br>
                 <span class="text-blue" style="font-size:13px;">Kemen</span><span class="text-orange" style="font-size:13px;">dikdasmen</span><br>
                 <span class="text-small" style="font-size:7px;">Pusat Data dan Teknologi Informasi</span>
             </div>
