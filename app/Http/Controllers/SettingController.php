@@ -112,12 +112,8 @@ class SettingController extends Controller
                 return response()->json(['output' => "Error: Token GitHub harus diisi di pengaturan."]);
             }
 
-            $repoUrl = trim(Process::run('git config --get remote.origin.url')->output());
+            $repoUrl = 'https://github.com/aangwie/simsiswa-sso.git';
             $branch = trim(Process::run('git rev-parse --abbrev-ref HEAD')->output());
-
-            if (empty($repoUrl)) {
-                return response()->json(['output' => "Error: Tidak dapat mendeteksi URL repository dari git config."]);
-            }
 
             if (empty($branch)) {
                 $branch = 'main';
@@ -125,18 +121,26 @@ class SettingController extends Controller
 
             // Construct authenticated URL
             $cleanUrl = str_replace(['https://', 'http://'], '', $repoUrl);
-            // Remove existing credentials if present
-            $cleanUrl = preg_replace('/^.*@/', '', $cleanUrl);
             $authUrl = "https://{$token}@{$cleanUrl}";
 
-            // Run git pull
-            $result = Process::run("git pull {$authUrl} {$branch}");
-            $logResult = Process::run("git log -1 --pretty=format:'%h - %an, %ar : %s'");
+            $fetchResult = Process::run("git fetch {$authUrl} {$branch}");
             
-            $output .= "--- RUNNING: git pull [AUTHENTICATED] {$branch} ---\n";
+            $output .= "--- RUNNING: git fetch & force reset [AUTHENTICATED] {$branch} ---\n";
             $maskToken = substr($token, 0, 7) . str_repeat('*', strlen($token) - 7);
             $output .= "Repo: " . str_replace($token, $maskToken, $authUrl) . "\n\n";
-            $output .= $result->output() . $result->errorOutput() . "\n\n";
+            $output .= $fetchResult->output() . $fetchResult->errorOutput() . "\n";
+
+            if ($fetchResult->successful()) {
+                $resetResult = Process::run("git reset --hard FETCH_HEAD");
+                $cleanResult = Process::run("git clean -fd");
+                
+                $output .= $resetResult->output() . $resetResult->errorOutput() . "\n";
+                $output .= $cleanResult->output() . $cleanResult->errorOutput() . "\n\n";
+            } else {
+                $output .= "Gagal melakukan fetch dari repository.\n\n";
+            }
+
+            $logResult = Process::run("git log -1 --pretty=format:'%h - %an, %ar : %s'");
             $output .= "--- LATEST COMMIT ---\n";
             $output .= trim($logResult->output()) . "\n";
             
