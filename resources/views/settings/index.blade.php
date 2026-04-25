@@ -102,7 +102,7 @@
                         <p class="text-xs text-slate-400">Tarik pembaruan terbaru dari GitHub.</p>
                     </div>
                 </div>
-                <button @click="updateApp()" :disabled="updating"
+                <button @click="updateApp($data)" :disabled="updating"
                     class="inline-flex items-center gap-2 px-6 py-2 bg-white text-slate-900 font-bold rounded-xl hover:bg-slate-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed uppercase text-[10px] tracking-widest">
                     <template x-if="!updating">
                         <span class="flex items-center gap-2">
@@ -130,13 +130,20 @@
                 </button>
             </div>
             <div class="p-0 bg-black/50 overflow-hidden">
-                <div class="bg-slate-950 p-2 flex items-center gap-2 px-4 border-b border-slate-800">
-                    <div class="flex gap-1.5">
-                        <div class="w-2.5 h-2.5 bg-red-500 rounded-full"></div>
-                        <div class="w-2.5 h-2.5 bg-yellow-500 rounded-full"></div>
-                        <div class="w-2.5 h-2.5 bg-green-500 rounded-full"></div>
+                <div class="bg-slate-950 p-2 flex items-center justify-between px-4 border-b border-slate-800">
+                    <div class="flex items-center gap-2">
+                        <div class="flex gap-1.5">
+                            <div class="w-2.5 h-2.5 bg-red-500 rounded-full"></div>
+                            <div class="w-2.5 h-2.5 bg-yellow-500 rounded-full"></div>
+                            <div class="w-2.5 h-2.5 bg-green-500 rounded-full"></div>
+                        </div>
+                        <span class="text-[10px] text-slate-500 font-mono">terminal - bash</span>
                     </div>
-                    <span class="text-[10px] text-slate-500 font-mono">terminal - bash</span>
+                    @if(!empty($lastUpdateDate))
+                    <div class="text-[10px] text-slate-400 font-mono">
+                        Terakhir diperbarui: {{ \Carbon\Carbon::parse($lastUpdateDate)->translatedFormat('d F Y H:i') }} | Versi: {{ $lastUpdateVersion }}
+                    </div>
+                    @endif
                 </div>
                 <pre class="p-6 text-green-400 font-mono text-xs overflow-x-auto min-h-[200px]"
                     x-text="output || `Siap untuk diperbarui...\n\n--- LATEST COMMIT ---\n{{ addslashes($lastCommit) }}`"></pre>
@@ -145,27 +152,29 @@
     </div>
     <!--end git update-->
     <script>
-        function updateApp() {
-            this.updating = true;
-            this.output = '$ Running git pull...\n';
+        function updateApp(state) {
+            state.updating = true;
+            state.output = '$ Running git fetch & reset...\n';
 
             fetch('{{ route("settings.git-update") }}')
                 .then(response => response.json())
                 .then(data => {
-                    this.output += data.output;
-                    this.updating = false;
+                    state.output += data.output;
+                    state.updating = false;
 
                     Swal.fire({
                         title: 'Update Selesai',
-                        text: 'Aplikasi telah berhasil ditarik dari GitHub.',
+                        text: 'Aplikasi telah berhasil diperbarui.',
                         icon: 'success',
-                        timer: 3000
+                        timer: 2000
+                    }).then(() => {
+                        window.location.reload();
                     });
                 })
                 .catch(error => {
-                    this.output += '\nError: Terjadi kesalahan saat melakukan update.';
-                    this.updating = false;
-                    Swal.fire('Error', 'Gagal melakukan pembaruan git.', 'error');
+                    state.output += '\nError: Terjadi kesalahan saat melakukan update.';
+                    state.updating = false;
+                    Swal.fire('Error', 'Gagal melakukan pembaruan.', 'error');
                 });
         }
     </script>

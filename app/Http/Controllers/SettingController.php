@@ -88,7 +88,10 @@ class SettingController extends Controller
             // Ignore
         }
 
-        return view('settings.index', compact('settings', 'lastCommit'));
+        $lastUpdateDate = $settings->where('key', 'last_update_date')->first()?->value;
+        $lastUpdateVersion = $settings->where('key', 'last_update_version')->first()?->value;
+
+        return view('settings.index', compact('settings', 'lastCommit', 'lastUpdateDate', 'lastUpdateVersion'));
     }
 
     public function update(Request $request)
@@ -136,6 +139,10 @@ class SettingController extends Controller
                 
                 $output .= $resetResult->output() . $resetResult->errorOutput() . "\n";
                 $output .= $cleanResult->output() . $cleanResult->errorOutput() . "\n\n";
+
+                $versionResult = Process::run("git log -1 --pretty=format:'%h'");
+                Setting::updateOrCreate(['key' => 'last_update_date'], ['value' => now()->toDateTimeString()]);
+                Setting::updateOrCreate(['key' => 'last_update_version'], ['value' => trim($versionResult->output())]);
             } else {
                 $output .= "Gagal melakukan fetch dari repository.\n\n";
             }
