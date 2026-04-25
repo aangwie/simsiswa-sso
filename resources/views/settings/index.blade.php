@@ -40,18 +40,10 @@
             <div class="space-y-4">
                 <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest border-b border-slate-50 pb-2">Konfigurasi GitHub</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-1">
+                    <div class="space-y-1 md:col-span-2">
                         <label class="block text-xs font-semibold text-slate-700 tracking-wide uppercase">GitHub Access Token</label>
                         <input type="password" name="github_token" value="{{ $settings->where('key', 'github_token')->first()?->value }}" placeholder="ghp_xxxxxxxxxxxx" class="w-full rounded-xl border-slate-200 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-sm font-mono">
-                        <p class="text-[10px] text-slate-400">Personal Access Token (fine-grained) dengan izin read-only.</p>
-                    </div>
-                    <div class="space-y-1">
-                        <label class="block text-xs font-semibold text-slate-700 tracking-wide uppercase">Repository URL</label>
-                        <input type="text" name="github_repo_url" value="{{ $settings->where('key', 'github_repo_url')->first()?->value }}" placeholder="https://github.com/username/repo.git" class="w-full rounded-xl border-slate-200 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-sm">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="block text-xs font-semibold text-slate-700 tracking-wide uppercase">Git Branch</label>
-                        <input type="text" name="github_branch" value="{{ $settings->where('key', 'github_branch')->first()?->value ?? 'main' }}" placeholder="main" class="w-full rounded-xl border-slate-200 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-sm">
+                        <p class="text-[10px] text-slate-400">Personal Access Token dengan izin read-only ke repository ini. Repository URL dan Branch akan dideteksi secara otomatis dari sistem.</p>
                     </div>
                 </div>
             </div>
@@ -120,7 +112,7 @@
                 </div>
                 <span class="text-[10px] text-slate-500 font-mono">terminal - bash</span>
             </div>
-            <pre class="p-6 text-green-400 font-mono text-xs overflow-x-auto min-h-[200px]" x-text="output || 'Siap untuk diperbarui...'"></pre>
+            <pre class="p-6 text-green-400 font-mono text-xs overflow-x-auto min-h-[200px]" x-text="output || `Siap untuk diperbarui...\n\n--- LATEST COMMIT ---\n{{ addslashes($lastCommit) }}`"></pre>
         </div>
     </div>
 </div>

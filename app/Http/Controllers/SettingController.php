@@ -80,7 +80,15 @@ class SettingController extends Controller
     public function index()
     {
         $settings = Setting::whereNotIn('key', ['website_name', 'website_logo'])->get();
-        return view('settings.index', compact('settings'));
+        
+        $lastCommit = "";
+        try {
+            $lastCommit = trim(Process::run("git log -1 --pretty=format:'%h - %an, %ar : %s'")->output());
+        } catch (\Exception $e) {
+            // Ignore
+        }
+
+        return view('settings.index', compact('settings', 'lastCommit'));
     }
 
     public function update(Request $request)
@@ -99,26 +107,38 @@ class SettingController extends Controller
         $output = "";
         try {
             $token = Setting::where('key', 'github_token')->first()?->value;
-            $repoUrl = Setting::where('key', 'github_repo_url')->first()?->value;
-            $branch = Setting::where('key', 'github_branch')->first()?->value ?? 'main';
 
-            if (!$token || !$repoUrl) {
-                return response()->json(['output' => "Error: Token GitHub dan URL Repositori harus diisi di pengaturan."]);
+            if (!$token) {
+                return response()->json(['output' => "Error: Token GitHub harus diisi di pengaturan."]);
+            }
+
+            $repoUrl = trim(Process::run('git config --get remote.origin.url')->output());
+            $branch = trim(Process::run('git rev-parse --abbrev-ref HEAD')->output());
+
+            if (empty($repoUrl)) {
+                return response()->json(['output' => "Error: Tidak dapat mendeteksi URL repository dari git config."]);
+            }
+
+            if (empty($branch)) {
+                $branch = 'main';
             }
 
             // Construct authenticated URL
-            // repoUrl format usually: https://github.com/user/repo.git
             $cleanUrl = str_replace(['https://', 'http://'], '', $repoUrl);
+            // Remove existing credentials if present
+            $cleanUrl = preg_replace('/^.*@/', '', $cleanUrl);
             $authUrl = "https://{$token}@{$cleanUrl}";
 
             // Run git pull
-            // We use origin as name but point to the auth URL
             $result = Process::run("git pull {$authUrl} {$branch}");
+            $logResult = Process::run("git log -1 --pretty=format:'%h - %an, %ar : %s'");
             
             $output .= "--- RUNNING: git pull [AUTHENTICATED] {$branch} ---\n";
             $maskToken = substr($token, 0, 7) . str_repeat('*', strlen($token) - 7);
             $output .= "Repo: " . str_replace($token, $maskToken, $authUrl) . "\n\n";
-            $output .= $result->output() . $result->errorOutput() . "\n";
+            $output .= $result->output() . $result->errorOutput() . "\n\n";
+            $output .= "--- LATEST COMMIT ---\n";
+            $output .= trim($logResult->output()) . "\n";
             
         } catch (\Exception $e) {
             $output .= "Error: " . $e->getMessage();
