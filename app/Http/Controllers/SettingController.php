@@ -115,46 +115,94 @@ class SettingController extends Controller
                 return response()->json(['output' => "Error: Token GitHub harus diisi di pengaturan."]);
             }
 
+            $projectPath = base_path();
             $repoUrl = 'https://github.com/aangwie/simsiswa-sso.git';
-            $branch = trim(Process::run('git rev-parse --abbrev-ref HEAD')->output());
-
-            if (empty($branch)) {
-                $branch = 'main';
-            }
-
-            // Construct authenticated URL
-            $cleanUrl = str_replace(['https://', 'http://'], '', $repoUrl);
-            $authUrl = "https://{$token}@{$cleanUrl}";
-
-            $fetchResult = Process::run("git fetch {$authUrl} {$branch}");
-            
-            $output .= "--- RUNNING: git fetch & force reset [AUTHENTICATED] {$branch} ---\n";
+            $branch = 'main';
+            $authUrl = "https://{$token}@github.com/aangwie/simsiswa-sso.git";
             $maskToken = substr($token, 0, 7) . str_repeat('*', strlen($token) - 7);
-            $output .= "Repo: " . str_replace($token, $maskToken, $authUrl) . "\n\n";
-            $output .= $fetchResult->output() . $fetchResult->errorOutput() . "\n";
+            $maskedUrl = "https://{$maskToken}@github.com/aangwie/simsiswa-sso.git";
 
-            if ($fetchResult->successful()) {
-                $resetResult = Process::run("git reset --hard FETCH_HEAD");
-                $cleanResult = Process::run("git clean -fd");
-                
-                $output .= $resetResult->output() . $resetResult->errorOutput() . "\n";
-                $output .= $cleanResult->output() . $cleanResult->errorOutput() . "\n\n";
+            $output .= "--- PROJECT PATH: {$projectPath} ---\n";
+            $output .= "--- REPO: {$maskedUrl} ---\n";
+            $output .= "--- BRANCH: {$branch} ---\n\n";
 
-                $versionResult = Process::run("git log -1 --pretty=format:'%h'");
-                Setting::updateOrCreate(['key' => 'last_update_date'], ['value' => now()->toDateTimeString()]);
-                Setting::updateOrCreate(['key' => 'last_update_version'], ['value' => trim($versionResult->output())]);
-            } else {
-                $output .= "Gagal melakukan fetch dari repository.\n\n";
+            // Try to detect current branch
+            $branchDetect = $this->runGitCommand('git rev-parse --abbrev-ref HEAD', $projectPath);
+            if (!empty(trim($branchDetect))) {
+                $branch = trim($branchDetect);
+                $output .= "Detected branch: {$branch}\n";
             }
 
-            $logResult = Process::run("git log -1 --pretty=format:'%h - %an, %ar : %s'");
+            // Step 1: git fetch
+            $output .= "\n\$ git fetch [AUTHENTICATED] {$branch}\n";
+            $fetchOutput = $this->runGitCommand("git fetch {$authUrl} {$branch}", $projectPath);
+            $output .= str_replace($token, $maskToken, $fetchOutput) . "\n";
+
+            // Step 2: git reset --hard FETCH_HEAD
+            $output .= "\$ git reset --hard FETCH_HEAD\n";
+            $resetOutput = $this->runGitCommand("git reset --hard FETCH_HEAD", $projectPath);
+            $output .= $resetOutput . "\n";
+
+            // Step 3: git clean -fd
+            $output .= "\$ git clean -fd\n";
+            $cleanOutput = $this->runGitCommand("git clean -fd", $projectPath);
+            $output .= $cleanOutput . "\n\n";
+
+            // Get latest commit info
+            $commitHash = trim($this->runGitCommand("git log -1 --pretty=format:%h", $projectPath));
+            $commitLog = trim($this->runGitCommand("git log -1 --pretty=format:%h - %an, %ar : %s", $projectPath));
+
+            if (!empty($commitHash)) {
+                Setting::updateOrCreate(['key' => 'last_update_date'], ['value' => now()->toDateTimeString()]);
+                Setting::updateOrCreate(['key' => 'last_update_version'], ['value' => $commitHash]);
+            }
+
             $output .= "--- LATEST COMMIT ---\n";
-            $output .= trim($logResult->output()) . "\n";
+            $output .= $commitLog . "\n";
             
         } catch (\Exception $e) {
-            $output .= "Error: " . $e->getMessage();
+            $output .= "\nException: " . $e->getMessage() . "\n";
+            $output .= "File: " . $e->getFile() . ":" . $e->getLine() . "\n";
         }
 
         return response()->json(['output' => $output]);
+    }
+
+    /**
+     * Run a git command with proper working directory.
+     * Falls back to exec() if Process facade fails.
+     */
+    private function runGitCommand(string $command, string $cwd): string
+    {
+        // Method 1: Laravel Process facade with explicit path
+        try {
+            $result = Process::path($cwd)->run($command);
+            $out = $result->output() . $result->errorOutput();
+            if (!empty(trim($out))) {
+                return $out;
+            }
+        } catch (\Exception $e) {
+            // Fall through to exec
+        }
+
+        // Method 2: exec() with cd
+        try {
+            $fullCommand = "cd " . escapeshellarg($cwd) . " && {$command} 2>&1";
+            $execOutput = '';
+            exec($fullCommand, $lines, $exitCode);
+            $execOutput = implode("\n", $lines);
+            return $execOutput;
+        } catch (\Exception $e) {
+            // Fall through to shell_exec
+        }
+
+        // Method 3: shell_exec
+        try {
+            $fullCommand = "cd " . escapeshellarg($cwd) . " && {$command} 2>&1";
+            $shellOutput = shell_exec($fullCommand);
+            return $shellOutput ?? '';
+        } catch (\Exception $e) {
+            return "Error executing command: " . $e->getMessage();
+        }
     }
 }

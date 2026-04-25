@@ -216,7 +216,8 @@
                     <a href="{{ route('skl.index') }}"
                         class="block py-2 text-sm {{ request()->routeIs('skl.index', 'skl.show') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">SKL</a>
                     <a href="{{ route('skl.cetak.index') }}"
-                        class="block py-2 text-sm {{ request()->routeIs('skl.cetak.*') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">Cetak SKL</a>
+                        class="block py-2 text-sm {{ request()->routeIs('skl.cetak.*') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">Cetak
+                        SKL</a>
                 </div>
 
                 <!-- Floating Tooltip for Minimized Sidebar -->
@@ -230,7 +231,8 @@
                     <a href="{{ route('skl.index') }}"
                         class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">SKL</a>
                     <a href="{{ route('skl.cetak.index') }}"
-                        class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">Cetak SKL</a>
+                        class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">Cetak
+                        SKL</a>
                 </div>
             </div>
 
@@ -239,8 +241,10 @@
                 class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl border border-transparent text-indigo-200 hover:bg-indigo-800/40 hover:text-white hover:border-indigo-700/30 transition-all"
                 :title="sidebarMinimized ? 'Manajemen BK' : ''">
                 <svg class="h-5 w-5 flex-shrink-0 text-indigo-400 group-hover:text-indigo-300 transition-colors"
-                    :class="{'mr-3': !sidebarMinimized}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    :class="{'mr-3': !sidebarMinimized}" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
                 <span x-show="!sidebarMinimized" x-transition:enter="transition ease-out duration-200"
                     x-transition:enter-start="opacity-0 -translate-x-2"
@@ -283,7 +287,7 @@
         </div>
 
         <!-- User Section Footer Sidebar -->
-        <div class="px-4 py-5 bg-indigo-950/50 border-t border-indigo-800/50"
+        <!--div class="px-4 py-5 bg-indigo-950/50 border-t border-indigo-800/50"
             :class="{'items-center': sidebarMinimized}">
             <div class="flex items-center gap-3 mb-4" :class="{'justify-center': sidebarMinimized}">
                 <div class="h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-r from-blue-400 to-indigo-500 p-0.5">
@@ -313,7 +317,7 @@
                     <span x-show="!sidebarMinimized">Logout</span>
                 </button>
             </form>
-        </div>
+        </div-->
     </aside>
 
     <!-- Main Content -->
