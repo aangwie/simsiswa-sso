@@ -64,7 +64,8 @@
                 <div class="space-y-8">
                     <!-- Seksi: Informasi Website -->
                     <div>
-                        <h3 class="text-sm font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">Informasi Website</h3>
+                        <h3 class="text-sm font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">Informasi Website
+                        </h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <!-- Website Name -->
                             <div class="space-y-2">
@@ -73,13 +74,15 @@
                                 <input type="text" name="website_name" value="{{ $settings['website_name'] ?? 'SIMSiswa' }}"
                                     placeholder="Contoh: SIMSiswa SMP XYZ"
                                     class="w-full sm:w-3/4 rounded-xl border-slate-200 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-sm">
-                                <p class="text-[10px] text-slate-400 mt-1">Nama ini akan ditampilkan pada judul halaman, logo
+                                <p class="text-[10px] text-slate-400 mt-1">Nama ini akan ditampilkan pada judul halaman,
+                                    logo
                                     samping, dan di seluruh sistem.</p>
                             </div>
 
                             <!-- Website Logo -->
                             <div class="space-y-4">
-                                <label class="block text-xs font-semibold text-slate-700 tracking-wide uppercase">Logo Website /
+                                <label class="block text-xs font-semibold text-slate-700 tracking-wide uppercase">Logo
+                                    Website /
                                     Favicon</label>
 
                                 <div class="flex items-start gap-4 flex-col sm:flex-row">
@@ -103,7 +106,8 @@
                                         <input type="file" name="website_logo" id="website_logo" accept="image/*"
                                             class="w-full sm:w-3/4 text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition-colors"
                                             onchange="previewLogo(this)">
-                                        <p class="text-[10px] text-slate-400">Rekomendasi rasio 1:1, transparan (PNG). Ukuran
+                                        <p class="text-[10px] text-slate-400">Rekomendasi rasio 1:1, transparan (PNG).
+                                            Ukuran
                                             maksimal 2MB. Ganti logo jika diperlukan.</p>
                                     </div>
                                 </div>
@@ -143,12 +147,14 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <!-- Nama Kepala Sekolah -->
                             <div class="space-y-2">
-                                <label class="block text-xs font-semibold text-slate-700 tracking-wide uppercase">Nama Kepala
+                                <label class="block text-xs font-semibold text-slate-700 tracking-wide uppercase">Nama
+                                    Kepala
                                     Sekolah</label>
                                 <input type="text" name="kepala_sekolah_name"
                                     value="{{ old('kepala_sekolah_name', $kepalaSekolah->name ?? '') }}"
                                     placeholder="Contoh: Budi Santoso, S.Pd"
-                                    class="w-full sm:w-3/4 rounded-xl border-slate-200 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-sm">
+                                    class="w-full sm:w-3/4 rounded-xl border-slate-200 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-sm"
+                                    readonly>
                             </div>
 
                             <!-- NIP Kepala Sekolah -->
@@ -158,7 +164,8 @@
                                 <input type="text" name="kepala_sekolah_nip"
                                     value="{{ old('kepala_sekolah_nip', $kepalaSekolah->nip ?? '') }}"
                                     placeholder="Contoh: 19800101 200501 1 001"
-                                    class="w-full sm:w-3/4 rounded-xl border-slate-200 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-sm">
+                                    class="w-full sm:w-3/4 rounded-xl border-slate-200 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-sm"
+                                    readonly>
                             </div>
                         </div>
                     </div>
