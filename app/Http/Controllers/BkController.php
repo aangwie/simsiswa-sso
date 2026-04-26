@@ -83,7 +83,7 @@ class BkController extends Controller
         }
 
         $konsultasi = $query->orderByDesc('tanggal_pengajuan')->paginate(15)->withQueryString();
-        $students = Student::orderBy('name')->get();
+        $students = Student::where('is_active', true)->orderBy('name')->get();
 
         return view('bk.konsultasi', compact('konsultasi', 'students'));
     }
@@ -233,7 +233,7 @@ class BkController extends Controller
 
         $poinSiswa = $query->orderByDesc('total_poin')->paginate(15)->withQueryString();
 
-        $students = Student::orderBy('name')->get();
+        $students = Student::where('is_active', true)->orderBy('name')->get();
         $pelanggarans = BkPelanggaran::orderBy('nama_pelanggaran')->get();
 
         // Detail pelanggaran (for modal)
@@ -330,7 +330,7 @@ class BkController extends Controller
     // ========================
     public function laporanIndex(Request $request)
     {
-        $students = Student::orderBy('name')->get();
+        $students = Student::where('is_active', true)->orderBy('name')->get();
         $pelanggarans = BkPelanggaran::orderBy('nama_pelanggaran')->get();
 
         $data = collect();
