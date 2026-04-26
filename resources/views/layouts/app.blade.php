@@ -44,7 +44,8 @@
         sidebarOpen: false, 
         sidebarMinimized: false,
         manajemenOpen: {{ request()->routeIs('students.*', 'classes.*', 'subjects.*') ? 'true' : 'false' }},
-        raporOpen: {{ request()->routeIs('semesters.*', 'reports.*', 'skl.*') ? 'true' : 'false' }}
+        raporOpen: {{ request()->routeIs('semesters.*', 'reports.*', 'skl.*') ? 'true' : 'false' }},
+        bkOpen: {{ request()->routeIs('bk.*') ? 'true' : 'false' }}
       }">
 
     <!-- Mobile sidebar backdrop -->
@@ -236,20 +237,59 @@
                 </div>
             </div>
 
-            <!-- Manajemen BK Menu -->
-            <a href="#"
-                class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl border border-transparent text-indigo-200 hover:bg-indigo-800/40 hover:text-white hover:border-indigo-700/30 transition-all"
-                :title="sidebarMinimized ? 'Manajemen BK' : ''">
-                <svg class="h-5 w-5 flex-shrink-0 text-indigo-400 group-hover:text-indigo-300 transition-colors"
-                    :class="{'mr-3': !sidebarMinimized}" xmlns="http://www.w3.org/2000/svg" fill="none"
-                    viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-                <span x-show="!sidebarMinimized" x-transition:enter="transition ease-out duration-200"
-                    x-transition:enter-start="opacity-0 -translate-x-2"
-                    x-transition:enter-end="opacity-100 translate-x-0">Manajemen BK</span>
-            </a>
+            <!-- Manajemen BK Submenu -->
+            <div class="space-y-1">
+                <button @click="bkOpen = !bkOpen"
+                    class="w-full group flex items-center justify-between px-3 py-3 text-sm font-medium rounded-xl border border-transparent text-indigo-200 hover:bg-indigo-800/40 hover:text-white hover:border-indigo-700/30 transition-all"
+                    :class="{'bg-indigo-800/30': bkOpen}" :title="sidebarMinimized ? 'Manajemen BK' : ''">
+                    <div class="flex items-center">
+                        <svg class="h-5 w-5 flex-shrink-0 text-indigo-400 group-hover:text-indigo-300 transition-colors"
+                            :class="{'mr-3': !sidebarMinimized}" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        <span x-show="!sidebarMinimized" x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 -translate-x-2"
+                            x-transition:enter-end="opacity-100 translate-x-0">Manajemen BK</span>
+                    </div>
+                    <svg x-show="!sidebarMinimized" class="h-4 w-4 transform transition-transform"
+                        :class="{'rotate-180': bkOpen}" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+
+                <div x-show="bkOpen && !sidebarMinimized" x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 -translate-y-2"
+                    x-transition:enter-end="opacity-100 translate-y-0" class="pl-11 pr-3 space-y-1">
+                    <a href="{{ route('bk.dashboard') }}"
+                        class="block py-2 text-sm {{ request()->routeIs('bk.dashboard') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">Dashboard BK</a>
+                    <a href="{{ route('bk.konsultasi.index') }}"
+                        class="block py-2 text-sm {{ request()->routeIs('bk.konsultasi.*') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">Konsultasi</a>
+                    <a href="{{ route('bk.pelanggaran.index') }}"
+                        class="block py-2 text-sm {{ request()->routeIs('bk.pelanggaran.*') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">Master Pelanggaran</a>
+                    <a href="{{ route('bk.poin.index') }}"
+                        class="block py-2 text-sm {{ request()->routeIs('bk.poin.*') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">Data Poin Siswa</a>
+                    <a href="{{ route('bk.laporan.index') }}"
+                        class="block py-2 text-sm {{ request()->routeIs('bk.laporan.*') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">Laporan</a>
+                </div>
+
+                <!-- Floating Tooltip for Minimized Sidebar -->
+                <div x-show="bkOpen && sidebarMinimized"
+                    class="absolute left-20 py-2 w-48 bg-indigo-900 rounded-xl shadow-xl border border-indigo-700 z-50">
+                    <a href="{{ route('bk.dashboard') }}"
+                        class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">Dashboard BK</a>
+                    <a href="{{ route('bk.konsultasi.index') }}"
+                        class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">Konsultasi</a>
+                    <a href="{{ route('bk.pelanggaran.index') }}"
+                        class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">Master Pelanggaran</a>
+                    <a href="{{ route('bk.poin.index') }}"
+                        class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">Data Poin Siswa</a>
+                    <a href="{{ route('bk.laporan.index') }}"
+                        class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">Laporan</a>
+                </div>
+            </div>
 
             @if(auth()->user()->role !== 'teacher')
                 <p x-show="!sidebarMinimized"
