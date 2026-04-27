@@ -54,13 +54,13 @@
         }
 
         .card {
-            width: 8cm;
-            height: 6cm;
+            width: 8.6cm;
+            height: 5.4cm;
             display: inline-block;
             margin-right: 0px;
             margin-bottom: 20px;
             border: 1px solid #999;
-            border-radius: 9px;
+            border-radius: 6px;
             overflow: hidden;
             background: #e0f7fa; /* Fallback */
             background: -webkit-linear-gradient(top left, #e0f7fa 0%, #b3e5fc 40%, #ffffff 100%);
@@ -81,24 +81,24 @@
             pointer-events: none;
         }
         .watermark img {
-            width: 140px;
+            width: 150px;
         }
 
         /* Front Card */
         .front-header {
             width: 100%;
-            padding: 4px 6px;
+            padding: 5px 7px;
             box-sizing: border-box;
             position: relative;
             z-index: 10;
         }
         .logo-kemdikbud {
             float: left;
-            width: 120px;
+            width: 129px;
         }
         .logo-img {
             float: left;
-            height: 20px;
+            height: 22px;
             margin-right: 4px;
         }
         .logo-text {
@@ -106,8 +106,8 @@
             margin-top: 2px;
             line-height: 1;
         }
-        .text-blue { color: #00a8e8; font-weight: bold; font-size: 9px; }
-        .text-orange { color: #f39c12; font-weight: bold; font-size: 9px; }
+        .text-blue { color: #00a8e8; font-weight: bold; font-size: 10px; }
+        .text-orange { color: #f39c12; font-weight: bold; font-size: 10px; }
         .text-small { font-size: 5px; color: #555; display: block; margin-top: 1px; }
 
         .title-box {
@@ -115,14 +115,14 @@
             text-align: center;
             line-height: 1.1;
         }
-        .title-main { color: #2980b9; font-size: 10px; font-weight: bold; margin: 0; }
+        .title-main { color: #2980b9; font-size: 11px; font-weight: bold; margin: 0; }
         .title-sub { color: #444; font-size: 6px; margin: 0; }
         
         .clear { clear: both; }
 
         .front-content {
             width: 100%;
-            padding: 4px 8px;
+            padding: 5px 8px;
             box-sizing: border-box;
             position: relative;
             z-index: 10;
@@ -130,16 +130,16 @@
 
         .left-section {
             float: left;
-            width: 60px;
+            width: 64px;
             text-align: center;
         }
         .nisn-logo {
-            width: 36px;
+            width: 39px;
             margin-bottom: 2px;
         }
         .user-photo {
-            width: 60px;
-            height: 76px;
+            width: 64px;
+            height: 85px;
             border: 1px solid #ccc;
             background: #fff;
             padding: 2px;
@@ -150,25 +150,25 @@
 
         .student-data {
             float: left;
-            width: 172px;
-            margin-left: 12px;
-            margin-top: 20px;
+            width: 185px;
+            margin-left: 13px;
+            margin-top: 22px;
         }
         .student-data table {
             width: 100%;
-            font-size: 8px;
+            font-size: 8.5px;
             border-collapse: collapse;
             color: #111;
         }
         .student-data td { padding: 2px 0; vertical-align: top; }
-        .col-label { width: 60px; }
+        .col-label { width: 64px; }
 
         .qr-bottom-right {
             position: absolute;
-            bottom: 8px;
-            right: 8px;
-            width: 40px;
-            height: 40px;
+            bottom: 9px;
+            right: 9px;
+            width: 42px;
+            height: 42px;
             background: #fff;
             padding: 1px;
             box-sizing: border-box;
@@ -178,47 +178,47 @@
 
         .dapodik-bottom-center {
             position: absolute;
-            bottom: 8px;
+            bottom: 9px;
             left: 50%;
             transform: translateX(-50%);
-            width: 72px;
+            width: 77px;
         }
         .dapodik-bottom-center img { width: 100%; }
 
         /* Back Card */
         .back-top {
             text-align: center;
-            padding-top: 12px;
+            padding-top: 13px;
             line-height: 1.1;
         }
-        .back-top img { height: 32px; margin-bottom: 2px; }
-        .back-top .text-small { font-size: 5px; }
+        .back-top img { height: 36px; margin-bottom: 2px; }
+        .back-top .text-small { font-size: 6px; }
         
         .back-bar {
             background-color: #6a7f7c;
             color: #fff;
             text-align: center;
             padding: 5px 0;
-            margin-top: 12px;
+            margin-top: 13px;
             line-height: 1.2;
         }
-        .back-bar-main { font-size: 10px; font-weight: bold; margin: 0; letter-spacing: 1px; }
+        .back-bar-main { font-size: 11px; font-weight: bold; margin: 0; letter-spacing: 1px; }
         .back-bar-sub { font-size: 6px; margin: 0; }
 
         .back-links {
             text-align: center;
-            font-size: 7px;
+            font-size: 8px;
             color: #444;
-            margin-top: 12px;
+            margin-top: 13px;
             line-height: 1.4;
         }
         
         .back-dapodik {
             text-align: center;
-            margin-top: 14px;
+            margin-top: 15px;
         }
         .back-dapodik img {
-            width: 72px;
+            width: 77px;
         }
     </style>
 </head>
