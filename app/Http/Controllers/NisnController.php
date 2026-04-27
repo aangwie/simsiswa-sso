@@ -56,12 +56,7 @@ class NisnController extends Controller
     {
         $websiteName = Setting::where('key', 'website_name')->first()?->value ?? 'SIMSiswa';
         $websiteLogo = Setting::where('key', 'website_logo')->first()?->value;
-        $pdf = Pdf::loadView('nisn.pdf', compact('student', 'websiteName', 'websiteLogo'))
-            ->setOption('enable-local-file-access', true);
         
-        // Custom paper size for ID card (landscape)
-        $pdf->setPaper('a4', 'portrait');
-
-        return $pdf->stream('Kartu_NISN_' . $student->nisn . '_' . $student->name . '.pdf');
+        return view('nisn.pdf_client', compact('student', 'websiteName', 'websiteLogo'));
     }
 }
