@@ -264,13 +264,16 @@
                     x-transition:enter-start="opacity-0 -translate-y-2"
                     x-transition:enter-end="opacity-100 translate-y-0" class="pl-11 pr-3 space-y-1">
                     <a href="{{ route('bk.dashboard') }}"
-                        class="block py-2 text-sm {{ request()->routeIs('bk.dashboard') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">Dashboard BK</a>
+                        class="block py-2 text-sm {{ request()->routeIs('bk.dashboard') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">Dashboard
+                        BK</a>
                     <a href="{{ route('bk.konsultasi.index') }}"
                         class="block py-2 text-sm {{ request()->routeIs('bk.konsultasi.*') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">Konsultasi</a>
                     <a href="{{ route('bk.pelanggaran.index') }}"
-                        class="block py-2 text-sm {{ request()->routeIs('bk.pelanggaran.*') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">Master Pelanggaran</a>
+                        class="block py-2 text-sm {{ request()->routeIs('bk.pelanggaran.*') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">Master
+                        Pelanggaran</a>
                     <a href="{{ route('bk.poin.index') }}"
-                        class="block py-2 text-sm {{ request()->routeIs('bk.poin.*') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">Data Poin Siswa</a>
+                        class="block py-2 text-sm {{ request()->routeIs('bk.poin.*') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">Data
+                        Poin Siswa</a>
                     <a href="{{ route('bk.laporan.index') }}"
                         class="block py-2 text-sm {{ request()->routeIs('bk.laporan.*') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">Laporan</a>
                 </div>
@@ -279,13 +282,16 @@
                 <div x-show="bkOpen && sidebarMinimized"
                     class="absolute left-20 py-2 w-48 bg-indigo-900 rounded-xl shadow-xl border border-indigo-700 z-50">
                     <a href="{{ route('bk.dashboard') }}"
-                        class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">Dashboard BK</a>
+                        class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">Dashboard
+                        BK</a>
                     <a href="{{ route('bk.konsultasi.index') }}"
                         class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">Konsultasi</a>
                     <a href="{{ route('bk.pelanggaran.index') }}"
-                        class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">Master Pelanggaran</a>
+                        class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">Master
+                        Pelanggaran</a>
                     <a href="{{ route('bk.poin.index') }}"
-                        class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">Data Poin Siswa</a>
+                        class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">Data Poin
+                        Siswa</a>
                     <a href="{{ route('bk.laporan.index') }}"
                         class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">Laporan</a>
                 </div>
@@ -327,7 +333,7 @@
         </div>
 
         <!-- User Section Footer Sidebar -->
-        <!--div class="px-4 py-5 bg-indigo-950/50 border-t border-indigo-800/50"
+        <div class="px-4 py-5 bg-indigo-950/50 border-t border-indigo-800/50"
             :class="{'items-center': sidebarMinimized}">
             <div class="flex items-center gap-3 mb-4" :class="{'justify-center': sidebarMinimized}">
                 <div class="h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-r from-blue-400 to-indigo-500 p-0.5">
@@ -357,7 +363,7 @@
                     <span x-show="!sidebarMinimized">Logout</span>
                 </button>
             </form>
-        </div-->
+        </div>
     </aside>
 
     <!-- Main Content -->
