@@ -44,7 +44,7 @@
         /* Area yang akan di-capture (kita sembunyikan dibalik loading tapi tetap ada di DOM agar bisa digambar) */
         .capture-container {
             width: 210mm; /* Lebar kertas A4 */
-            padding: 20mm;
+            padding: 10mm; /* Margin kertas 1 cm */
             background: white;
             box-sizing: border-box;
             position: absolute;
@@ -94,7 +94,7 @@
         }
         .logo-kemdikbud {
             float: left;
-            width: 129px;
+            width: 140px;
         }
         .logo-img {
             float: left;
@@ -324,9 +324,7 @@
                 </div>
             </div>
         </div>
-
-        <br>
-
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <!-- BACK CARD -->
         <div class="card">
             <div class="watermark">
