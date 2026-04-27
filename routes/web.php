@@ -22,6 +22,7 @@ Route::get('/', function () {
 // Public: Cek Kelulusan
 Route::get('/cek-kelulusan', [SklController::class, 'cekKelulusan'])->name('cek-kelulusan');
 Route::post('/cek-kelulusan/check', [SklController::class, 'cekKelulusanCheck'])->name('cek-kelulusan.check');
+Route::get('skl/cetak/pdf/{student}', [SklController::class, 'cetakPdf'])->name('skl.cetak.pdf');
 
 // Public: Cetak NISN
 Route::get('/cetak-nisn', [NisnController::class, 'index'])->name('cetak-nisn.index');
@@ -56,7 +57,6 @@ Route::middleware('auth')->group(function () {
     Route::get('skl/cetak', [SklController::class, 'cetakIndex'])->name('skl.cetak.index');
     Route::post('skl/cetak/settings', [SklController::class, 'saveCetakSettings'])->name('skl.cetak.settings');
     Route::get('skl/cetak/{class}', [SklController::class, 'cetakShow'])->name('skl.cetak.show');
-    Route::get('skl/cetak/pdf/{student}', [SklController::class, 'cetakPdf'])->name('skl.cetak.pdf');
 
     // SKL
     Route::get('skl', [SklController::class, 'index'])->name('skl.index');

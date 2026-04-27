@@ -35,7 +35,9 @@ return [
     
     'pdf' => [
         'enabled' => true,
-        'binary'  => env('WKHTML_PDF_BINARY', base_path('vendor/wemersonjanuario/wkhtmltopdf-windows/bin/64bit/wkhtmltopdf.exe')),
+        'binary'  => env('WKHTML_PDF_BINARY', PHP_OS_FAMILY === 'Windows' 
+            ? base_path('vendor/wemersonjanuario/wkhtmltopdf-windows/bin/64bit/wkhtmltopdf.exe')
+            : base_path('vendor/h4cc/wkhtmltopdf-amd64/bin/wkhtmltopdf-amd64')),
         'timeout' => false,
         'options' => [],
         'env'     => [],
