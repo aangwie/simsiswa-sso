@@ -7,6 +7,7 @@ use App\Models\Semester;
 use App\Models\Student;
 use App\Models\Subject;
 use App\Models\Rapor;
+use App\Models\Usp;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -42,7 +43,6 @@ class SklController extends Controller
                 $aggregatedGrades[$key] = ['total' => 0, 'semesters' => []];
             }
             $aggregatedGrades[$key]['total'] += floatval($grade->grade);
-            // Track distinct semesters
             if (!in_array($grade->semester_id, $aggregatedGrades[$key]['semesters'])) {
                 $aggregatedGrades[$key]['semesters'][] = $grade->semester_id;
             }
@@ -54,7 +54,15 @@ class SklController extends Controller
             $existingGrades[$key] = (object) ['grade' => $semesterCount > 0 ? ($data['total'] / $semesterCount) : 0];
         }
 
-        return view('skl.show', compact('class', 'students', 'subjects', 'existingGrades'));
+        // Fetch USP grades
+        $uspGrades = \DB::table('usps')
+            ->where('school_class_id', $class->id)
+            ->get()
+            ->keyBy(function ($item) {
+                return $item->student_id . '_' . $item->subject_id;
+            });
+
+        return view('skl.show', compact('class', 'students', 'subjects', 'existingGrades', 'uspGrades'));
     }
 
     public function exportExcel(Request $request, SchoolClass $class)
@@ -91,6 +99,14 @@ class SklController extends Controller
             $existingGrades[$key] = (object) ['grade' => $semesterCount > 0 ? ($data['total'] / $semesterCount) : 0];
         }
 
+        // Fetch USP grades
+        $uspGrades = \DB::table('usps')
+            ->where('school_class_id', $class->id)
+            ->get()
+            ->keyBy(function ($item) {
+                return $item->student_id . '_' . $item->subject_id;
+            });
+
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Data SKL Kumulatif');
@@ -100,6 +116,8 @@ class SklController extends Controller
             $headers[] = $subject->name;
         }
         $headers[] = 'RATA-RATA NILAI RAPOR SEMUA MAPEL';
+        $headers[] = 'RATA-RATA USP';
+        $headers[] = 'RATA-RATA AKHIR';
         $headers[] = 'NILAI SIKAP/PERILAKU (SB; B; C; K)';
         $headers[] = 'KET (LULUS, TIDAK LULUS)';
 
@@ -127,26 +145,36 @@ class SklController extends Controller
             ];
 
             $totalGrade = 0;
+            $totalUsp = 0;
+            $totalRataAkhir = 0;
             $countGrade = 0;
 
             foreach ($subjects as $subject) {
                 $key = $student->id . '_' . $subject->id;
-                $grade = isset($existingGrades[$key]) ? floatval($existingGrades[$key]->grade) : 0;
-                $rowData[] = $grade;
-                $totalGrade += $grade;
+                $gradeRapor = isset($existingGrades[$key]) ? floatval($existingGrades[$key]->grade) : 0;
+                $gradeUsp = isset($uspGrades[$key]) ? floatval($uspGrades[$key]->grade) : 0;
+                $rataAkhir = ($gradeRapor + $gradeUsp) / 2;
+
+                $rowData[] = round($rataAkhir, 2);
+                $totalGrade += $gradeRapor;
+                $totalUsp += $gradeUsp;
+                $totalRataAkhir += $rataAkhir;
                 $countGrade++;
             }
 
-            $average = $countGrade > 0 ? ($totalGrade / $countGrade) : 0;
+            $avgRapor = $countGrade > 0 ? ($totalGrade / $countGrade) : 0;
+            $avgUsp = $countGrade > 0 ? ($totalUsp / $countGrade) : 0;
+            $avgRataAkhir = $countGrade > 0 ? ($totalRataAkhir / $countGrade) : 0;
             
-            // Format average to 2 decimal places using round
-            $rowData[] = round($average, 2);
+            $rowData[] = round($avgRapor, 2);
+            $rowData[] = round($avgUsp, 2);
+            $rowData[] = round($avgRataAkhir, 2);
 
             // Behavioral grade
             $rowData[] = 'B';
 
-            // Pass status
-            if ($average >= $min_grade) {
+            // Pass status based on rata-rata akhir
+            if ($avgRataAkhir >= $min_grade) {
                 $rowData[] = 'L';
             } else {
                 $rowData[] = 'TL';
@@ -215,24 +243,36 @@ class SklController extends Controller
         $existingGradesRaw = \DB::table('rapors')
             ->where('student_id', $student->id)
             ->get();
+
+        // Fetch USP grades for this student
+        $uspGradesRaw = \DB::table('usps')
+            ->where('student_id', $student->id)
+            ->get()
+            ->keyBy('subject_id');
             
         $existingGrades = [];
-        $totalGrade = 0;
+        $uspGrades = [];
+        $totalRataAkhir = 0;
         $countGrade = 0;
         
         foreach ($subjects as $subject) {
             $subjectGrades = $existingGradesRaw->where('subject_id', $subject->id);
             $total = $subjectGrades->sum('grade');
-            // Jumlah semester yang diikuti siswa untuk mapel ini
             $semesterCount = $subjectGrades->pluck('semester_id')->unique()->count();
-            $avg = $semesterCount > 0 ? ($total / $semesterCount) : 0;
+            $avgRapor = $semesterCount > 0 ? ($total / $semesterCount) : 0;
             
-            $existingGrades[$subject->id] = (object) ['grade' => $avg];
+            $existingGrades[$subject->id] = (object) ['grade' => $avgRapor];
+
+            $uspValue = isset($uspGradesRaw[$subject->id]) ? floatval($uspGradesRaw[$subject->id]->grade) : 0;
+            $uspGrades[$subject->id] = (object) ['grade' => $uspValue];
+
+            // Rata-Rata Akhir = (Rata-Rata Rapor + USP) / 2
+            $rataAkhir = ($avgRapor + $uspValue) / 2;
             
-            $totalGrade += $avg;
+            $totalRataAkhir += $rataAkhir;
             $countGrade++;
         }
-        $average = $countGrade > 0 ? ($totalGrade / $countGrade) : 0;
+        $average = $countGrade > 0 ? ($totalRataAkhir / $countGrade) : 0;
             
         $tempatCetak = Setting::where('key', 'tempat_cetak')->first()->value ?? 'Pacitan';
         $tanggalCetak = Setting::where('key', 'tanggal_cetak')->first()->value ?? date('Y-m-d');
@@ -244,10 +284,9 @@ class SklController extends Controller
 
         $kepalaSekolah = \Illuminate\Support\Facades\DB::table('teachers')->where('position', 'Kepala Sekolah')->first();
         
-        // Pass threshold uses same constant assumption as export does or basic 65
         $isLulus = $average >= 65; 
         
-        $pdf = Pdf::loadView('skl.pdf', compact('student', 'class', 'subjects', 'existingGrades', 'tempatCetak', 'tanggalCetak', 'nomorSkl', 'websiteLogo', 'websiteName', 'kepalaSekolah', 'average', 'isLulus', 'schoolProfile'));
+        $pdf = Pdf::loadView('skl.pdf', compact('student', 'class', 'subjects', 'existingGrades', 'uspGrades', 'tempatCetak', 'tanggalCetak', 'nomorSkl', 'websiteLogo', 'websiteName', 'kepalaSekolah', 'average', 'isLulus', 'schoolProfile'));
         
         return $pdf->stream('SKL_' . $student->nis . '_' . $student->name . '.pdf');
     }
@@ -298,22 +337,30 @@ class SklController extends Controller
             ->where('student_id', $student->id)
             ->get();
 
+        $uspGradesRaw = \DB::table('usps')
+            ->where('student_id', $student->id)
+            ->get()
+            ->keyBy('subject_id');
+
         $existingGrades = [];
-        $totalGrade = 0;
+        $totalRataAkhir = 0;
         $countGrade = 0;
 
         foreach ($subjects as $subject) {
             $subjectGrades = $existingGradesRaw->where('subject_id', $subject->id);
             $total = $subjectGrades->sum('grade');
             $semesterCount = $subjectGrades->pluck('semester_id')->unique()->count();
-            $avg = $semesterCount > 0 ? ($total / $semesterCount) : 0;
+            $avgRapor = $semesterCount > 0 ? ($total / $semesterCount) : 0;
 
-            $existingGrades[$subject->id] = (object) ['grade' => $avg];
+            $existingGrades[$subject->id] = (object) ['grade' => $avgRapor];
 
-            $totalGrade += $avg;
+            $uspValue = isset($uspGradesRaw[$subject->id]) ? floatval($uspGradesRaw[$subject->id]->grade) : 0;
+            $rataAkhir = ($avgRapor + $uspValue) / 2;
+
+            $totalRataAkhir += $rataAkhir;
             $countGrade++;
         }
-        $average = $countGrade > 0 ? ($totalGrade / $countGrade) : 0;
+        $average = $countGrade > 0 ? ($totalRataAkhir / $countGrade) : 0;
 
         $isLulus = $average >= 65;
 

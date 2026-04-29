@@ -55,6 +55,8 @@
                             </th>
                         @endforeach
                         <th class="px-4 py-3 font-semibold border-r border-slate-200 text-center whitespace-nowrap bg-indigo-50 text-indigo-700">Rata-Rata</th>
+                        <th class="px-4 py-3 font-semibold border-r border-slate-200 text-center whitespace-nowrap bg-amber-50 text-amber-700">Nilai USP</th>
+                        <th class="px-4 py-3 font-semibold border-r border-slate-200 text-center whitespace-nowrap bg-emerald-50 text-emerald-700">Rata-Rata Akhir</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-sm">
@@ -62,6 +64,9 @@
                         @php
                             $totalGrade = 0;
                             $countGrade = 0;
+                            $totalUsp = 0;
+                            $countUsp = 0;
+                            $totalRataAkhir = 0;
                         @endphp
                         <tr class="hover:bg-slate-50/50 transition-colors">
                             <td class="px-4 py-2 border-r border-slate-200 sticky left-0 bg-white font-medium text-slate-800">
@@ -73,6 +78,13 @@
                                     $gradeValue = isset($existingGrades[$key]) ? round(floatval($existingGrades[$key]->grade), 2) : 0;
                                     $totalGrade += $gradeValue;
                                     $countGrade++;
+
+                                    $uspValue = isset($uspGrades[$key]) ? floatval($uspGrades[$key]->grade) : 0;
+                                    $totalUsp += $uspValue;
+                                    $countUsp++;
+
+                                    $rataAkhir = ($gradeValue + $uspValue) / 2;
+                                    $totalRataAkhir += $rataAkhir;
                                 @endphp
                                 <td class="px-1 py-1 border-r border-slate-200 text-center font-medium text-slate-600">
                                     {{ $gradeValue > 0 ? number_format($gradeValue, 2) : '-' }}
@@ -80,14 +92,22 @@
                             @endforeach
                             @php
                                 $average = $countGrade > 0 ? round($totalGrade / $countGrade, 2) : 0;
+                                $avgUsp = $countUsp > 0 ? round($totalUsp / $countUsp, 2) : 0;
+                                $avgRataAkhir = $countGrade > 0 ? round($totalRataAkhir / $countGrade, 2) : 0;
                             @endphp
                             <td class="px-4 py-2 border-r border-slate-200 text-center font-bold text-indigo-600 bg-indigo-50/30">
                                 {{ number_format($average, 2) }}
                             </td>
+                            <td class="px-4 py-2 border-r border-slate-200 text-center font-bold text-amber-600 bg-amber-50/30">
+                                {{ number_format($avgUsp, 2) }}
+                            </td>
+                            <td class="px-4 py-2 border-r border-slate-200 text-center font-bold text-emerald-600 bg-emerald-50/30">
+                                {{ number_format($avgRataAkhir, 2) }}
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ count($subjects) + 2 }}" class="px-6 py-8 text-center text-slate-500 bg-white">
+                            <td colspan="{{ count($subjects) + 4 }}" class="px-6 py-8 text-center text-slate-500 bg-white">
                                 Belum ada siswa aktif di kelas ini.
                             </td>
                         </tr>

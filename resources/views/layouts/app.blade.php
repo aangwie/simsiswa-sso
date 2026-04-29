@@ -44,7 +44,7 @@
         sidebarOpen: false, 
         sidebarMinimized: false,
         manajemenOpen: {{ request()->routeIs('students.*', 'classes.*', 'subjects.*') ? 'true' : 'false' }},
-        raporOpen: {{ request()->routeIs('semesters.*', 'reports.*', 'skl.*') ? 'true' : 'false' }},
+        raporOpen: {{ request()->routeIs('semesters.*', 'reports.*', 'usp.*', 'skl.*') ? 'true' : 'false' }},
         bkOpen: {{ request()->routeIs('bk.*') ? 'true' : 'false' }}
       }">
 
@@ -214,6 +214,9 @@
                     <a href="{{ route('reports.index') }}"
                         class="block py-2 text-sm {{ request()->routeIs('reports.*') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">Nilai
                         Rapor</a>
+                    <a href="{{ route('usp.index') }}"
+                        class="block py-2 text-sm {{ request()->routeIs('usp.*') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">Nilai
+                        USP</a>
                     <a href="{{ route('skl.index') }}"
                         class="block py-2 text-sm {{ request()->routeIs('skl.index', 'skl.show') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">SKL</a>
                     <a href="{{ route('skl.cetak.index') }}"
@@ -229,6 +232,9 @@
                     <a href="{{ route('reports.index') }}"
                         class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">Nilai
                         Rapor</a>
+                    <a href="{{ route('usp.index') }}"
+                        class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">Nilai
+                        USP</a>
                     <a href="{{ route('skl.index') }}"
                         class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">SKL</a>
                     <a href="{{ route('skl.cetak.index') }}"

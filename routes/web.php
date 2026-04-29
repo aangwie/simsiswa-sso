@@ -12,6 +12,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SemesterController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SklController;
+use App\Http\Controllers\UspController;
 use App\Http\Controllers\NisnController;
 use App\Http\Controllers\BkController;
 
@@ -51,6 +52,15 @@ Route::middleware('auth')->group(function () {
     Route::get('reports/{class}/export-excel', [ReportController::class, 'exportExcel'])->name('reports.export-excel');
     Route::get('reports/{class}/import-template', [ReportController::class, 'importTemplate'])->name('reports.import-template');
     Route::post('reports/{class}/import-excel', [ReportController::class, 'importExcel'])->name('reports.import-excel');
+    
+    // USP (Ujian Satuan Pendidikan)
+    Route::get('usp', [UspController::class, 'index'])->name('usp.index');
+    Route::get('usp/{class}', [UspController::class, 'show'])->name('usp.show');
+    Route::post('usp/{class}', [UspController::class, 'store'])->name('usp.store');
+    Route::get('usp/{class}/export-excel', [UspController::class, 'exportExcel'])->name('usp.export-excel');
+    Route::get('usp/{class}/import-template', [UspController::class, 'importTemplate'])->name('usp.import-template');
+    Route::post('usp/{class}/import-excel', [UspController::class, 'importExcel'])->name('usp.import-excel');
+
     Route::resource('subjects', SubjectController::class);
 
     // Cetak SKL

@@ -268,7 +268,7 @@
                                 class="text-sm font-semibold text-indigo-200">{{ $student->schoolClass->name ?? '-' }}</span>
                         </div>
                         <div class="flex items-center justify-between border-b border-white/5 pb-3">
-                            <span class="text-sm text-indigo-300/60 font-medium">Rata-Rata Nilai</span>
+                            <span class="text-sm text-indigo-300/60 font-medium">Rata-Rata Akhir</span>
                             <span
                                 class="text-sm font-bold {{ $isLulus ? 'text-emerald-400' : 'text-red-400' }}">{{ number_format($average, 2) }}</span>
                         </div>

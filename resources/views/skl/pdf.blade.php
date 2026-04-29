@@ -260,9 +260,11 @@
                         <td>{{ $subject->name }}</td>
                         <td style="text-align: center;">
                             @php
-                                $grade = isset($existingGrades[$subject->id]) ? floatval($existingGrades[$subject->id]->grade) : 0;
+                                $gradeRapor = isset($existingGrades[$subject->id]) ? floatval($existingGrades[$subject->id]->grade) : 0;
+                                $gradeUsp = isset($uspGrades[$subject->id]) ? floatval($uspGrades[$subject->id]->grade) : 0;
+                                $rataAkhir = ($gradeRapor + $gradeUsp) / 2;
                             @endphp
-                            {{ number_format($grade, 2, ',', '.') }}
+                            {{ number_format($rataAkhir, 2, ',', '.') }}
                         </td>
                     </tr>
                 @endforeach
