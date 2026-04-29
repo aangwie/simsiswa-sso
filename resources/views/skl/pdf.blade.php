@@ -239,7 +239,8 @@
         <div class="status-box">
             <h4>{{ $isLulus ? 'LULUS' : 'TIDAK LULUS' }}</h4>
             <p>dari {{ $schoolProfile->name ?? 'SMP Negeri 6 Sudimoro' }} pada tanggal
-                {{ \Carbon\Carbon::parse($tanggalCetak)->locale('id')->translatedFormat('d F Y') }}, setelah memenuhi seluruh kriteria
+                {{ \Carbon\Carbon::parse($tanggalCetak)->locale('id')->translatedFormat('d F Y') }}, setelah memenuhi
+                seluruh kriteria
                 sesuai dengan peraturan perundang-undangan, dengan nilai sebagai berikut
             </p>
         </div>
@@ -255,9 +256,9 @@
             <tbody>
                 @foreach($subjects as $index => $subject)
                     <tr>
-                        <td class="text-center">{{ $index + 1 }}.</td>
+                        <td style="text-align: center;">{{ $index + 1 }}.</td>
                         <td>{{ $subject->name }}</td>
-                        <td class="text-center">
+                        <td style="text-align: center;">
                             @php
                                 $grade = isset($existingGrades[$subject->id]) ? floatval($existingGrades[$subject->id]->grade) : 0;
                             @endphp
@@ -267,7 +268,7 @@
                 @endforeach
                 <tr>
                     <td colspan="2" class="text-center"><strong>Rata-rata</strong></td>
-                    <td class="text-center"><strong>{{ number_format($average, 2, ',', '.') }}</strong></td>
+                    <td style="text-align: center;"><strong>{{ number_format($average, 2, ',', '.') }}</strong></td>
                 </tr>
             </tbody>
         </table>
@@ -284,7 +285,8 @@
                 <!-- Box for Photo/Stamp as in the image -->
             </div>
             <div class="signature-section">
-                {{ $tempatCetak }}, {{ \Carbon\Carbon::parse($tanggalCetak)->locale('id')->translatedFormat('d F Y') }}<br>
+                {{ $tempatCetak }},
+                {{ \Carbon\Carbon::parse($tanggalCetak)->locale('id')->translatedFormat('d F Y') }}<br>
                 Kepala Sekolah,<br><br><br><br>
                 <strong><u>{{ $kepalaSekolah->name ?? 'Drs. MARJOKO, M.MPd' }}</u></strong><br>
                 NIP. {{ $kepalaSekolah->nip ?? '19680916 199903 1 010' }}
