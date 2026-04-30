@@ -44,7 +44,7 @@
         sidebarOpen: false, 
         sidebarMinimized: false,
         manajemenOpen: {{ request()->routeIs('students.*', 'classes.*', 'subjects.*') ? 'true' : 'false' }},
-        raporOpen: {{ request()->routeIs('semesters.*', 'reports.*', 'usp.*', 'skl.*') ? 'true' : 'false' }},
+        raporOpen: {{ request()->routeIs('semesters.*', 'reports.*', 'usp.*', 'skl.*', 'nilai-akhir.*') ? 'true' : 'false' }},
         bkOpen: {{ request()->routeIs('bk.*') ? 'true' : 'false' }}
       }">
 
@@ -222,6 +222,9 @@
                     <a href="{{ route('skl.cetak.index') }}"
                         class="block py-2 text-sm {{ request()->routeIs('skl.cetak.*') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">Cetak
                         SKL</a>
+                    <a href="{{ route('nilai-akhir.index') }}"
+                        class="block py-2 text-sm {{ request()->routeIs('nilai-akhir.*') ? 'text-white font-bold' : 'text-indigo-300 hover:text-white' }} transition-colors">Nilai
+                        Akhir</a>
                 </div>
 
                 <!-- Floating Tooltip for Minimized Sidebar -->
@@ -240,6 +243,9 @@
                     <a href="{{ route('skl.cetak.index') }}"
                         class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">Cetak
                         SKL</a>
+                    <a href="{{ route('nilai-akhir.index') }}"
+                        class="block px-4 py-2 text-sm text-indigo-200 hover:bg-indigo-800 hover:text-white">Nilai
+                        Akhir</a>
                 </div>
             </div>
 

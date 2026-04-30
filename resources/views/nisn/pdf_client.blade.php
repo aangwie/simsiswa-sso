@@ -2,7 +2,16 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Mencetak Kartu NISN - {{ $student->name }}</title>
+     @php
+        $websiteLogo = \App\Models\Setting::where('key', 'website_logo')->first()?->value;
+        $websiteName = \App\Models\Setting::where('key', 'website_name')->first()?->value ?? 'SIMSiswa';
+    @endphp
+    <title>Cetak NISN - {{ $websiteName }}</title>
+    @if($websiteLogo)
+        <link rel="icon" href="{{ $websiteLogo }}">
+    @else
+        <link rel="icon" href="{{ asset('favicon.ico') }}">
+    @endif
     <!-- Library untuk merubah HTML ke Canvas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- Library untuk merubah Canvas ke PDF -->

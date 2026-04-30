@@ -75,19 +75,21 @@
                             @foreach($subjects as $subject)
                                 @php
                                     $key = $student->id . '_' . $subject->id;
-                                    $gradeValue = isset($existingGrades[$key]) ? round(floatval($existingGrades[$key]->grade), 2) : 0;
+                                    $gradeValue = isset($existingGrades[$key]) ? round(floatval($existingGrades[$key]->grade)) : 0;
                                     $totalGrade += $gradeValue;
                                     $countGrade++;
 
                                     $uspValue = isset($uspGrades[$key]) ? floatval($uspGrades[$key]->grade) : 0;
-                                    $totalUsp += $uspValue;
-                                    $countUsp++;
+                                    if ($uspValue > 0) {
+                                        $totalUsp += $uspValue;
+                                        $countUsp++;
+                                    }
 
                                     $rataAkhir = ($gradeValue + $uspValue) / 2;
                                     $totalRataAkhir += $rataAkhir;
                                 @endphp
                                 <td class="px-1 py-1 border-r border-slate-200 text-center font-medium text-slate-600">
-                                    {{ $gradeValue > 0 ? number_format($gradeValue, 2) : '-' }}
+                                    {{ $gradeValue > 0 ? number_format($gradeValue, 0) : '-' }}
                                 </td>
                             @endforeach
                             @php

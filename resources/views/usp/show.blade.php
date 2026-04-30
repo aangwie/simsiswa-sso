@@ -54,6 +54,7 @@
                                     {{ !empty($subject->code) ? $subject->code : \Str::limit($subject->name, 10, '') }}
                                 </th>
                             @endforeach
+                            <th class="px-4 py-3 font-semibold border-r border-slate-200 text-center whitespace-nowrap bg-indigo-50 text-indigo-700 sticky right-0 z-10">Rata-Rata</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 text-sm">
@@ -62,24 +63,38 @@
                                 <td class="px-4 py-2 border-r border-slate-200 sticky left-0 bg-white font-medium text-slate-800">
                                     {{ $student->name }}
                                 </td>
+                                @php
+                                    $totalUsp = 0;
+                                    $countUsp = 0;
+                                @endphp
                                 @foreach($subjects as $subject)
                                     @php
                                         $key = $student->id . '_' . $subject->id;
                                         $gradeValue = isset($existingGrades[$key]) ? $existingGrades[$key]->grade : '';
+                                        if ($gradeValue !== '' && $gradeValue !== null) {
+                                            $totalUsp += floatval($gradeValue);
+                                            $countUsp++;
+                                        }
                                     @endphp
                                     <td class="px-1 py-1 border-r border-slate-200 text-center">
                                         <input type="number" 
                                                name="grades[{{ $student->id }}][{{ $subject->id }}]" 
-                                               value="{{ $gradeValue }}" 
-                                               min="0" max="100"
+                                               value="{{ $gradeValue !== '' && $gradeValue !== null ? number_format(floatval($gradeValue), 2, '.', '') : '' }}" 
+                                               min="0" max="100" step="0.01"
                                                class="w-full md:w-16 mx-auto px-2 py-1.5 text-center text-sm rounded-lg border border-transparent hover:border-slate-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:bg-white bg-slate-50/50 transition-all outline-none"
                                                placeholder="-">
                                     </td>
                                 @endforeach
+                                @php
+                                    $avgUsp = $countUsp > 0 ? round($totalUsp / $countUsp, 2) : 0;
+                                @endphp
+                                <td class="px-4 py-2 border-r border-slate-200 text-center font-bold text-indigo-600 bg-indigo-50/30 sticky right-0">
+                                    {{ $countUsp > 0 ? number_format($avgUsp, 2) : '-' }}
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="{{ count($subjects) + 1 }}" class="px-6 py-8 text-center text-slate-500 bg-white">
+                                <td colspan="{{ count($subjects) + 2 }}" class="px-6 py-8 text-center text-slate-500 bg-white">
                                     Belum ada siswa aktif di kelas ini.
                                 </td>
                             </tr>

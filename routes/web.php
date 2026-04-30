@@ -73,6 +73,10 @@ Route::middleware('auth')->group(function () {
     Route::get('skl/{class}', [SklController::class, 'show'])->name('skl.show');
     Route::get('skl/{class}/export-excel', [SklController::class, 'exportExcel'])->name('skl.export-excel');
 
+    // Nilai Akhir
+    Route::get('nilai-akhir', [SklController::class, 'nilaiAkhirIndex'])->name('nilai-akhir.index');
+    Route::get('nilai-akhir/{class}', [SklController::class, 'nilaiAkhirShow'])->name('nilai-akhir.show');
+
     // BK (Bimbingan Konseling)
     Route::get('bk', [BkController::class, 'dashboard'])->name('bk.dashboard');
     Route::get('bk/konsultasi', [BkController::class, 'konsultasiIndex'])->name('bk.konsultasi.index');

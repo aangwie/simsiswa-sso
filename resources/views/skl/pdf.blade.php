@@ -264,7 +264,7 @@
                                 $gradeUsp = isset($uspGrades[$subject->id]) ? floatval($uspGrades[$subject->id]->grade) : 0;
                                 $rataAkhir = ($gradeRapor + $gradeUsp) / 2;
                             @endphp
-                            {{ number_format($rataAkhir, 2, ',', '.') }}
+                            {{ number_format(round($rataAkhir), 0, ',', '.') }}
                         </td>
                     </tr>
                 @endforeach

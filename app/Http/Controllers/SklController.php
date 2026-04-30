@@ -155,7 +155,7 @@ class SklController extends Controller
                 $gradeUsp = isset($uspGrades[$key]) ? floatval($uspGrades[$key]->grade) : 0;
                 $rataAkhir = ($gradeRapor + $gradeUsp) / 2;
 
-                $rowData[] = round($rataAkhir, 2);
+                $rowData[] = round($rataAkhir);
                 $totalGrade += $gradeRapor;
                 $totalUsp += $gradeUsp;
                 $totalRataAkhir += $rataAkhir;
@@ -289,6 +289,64 @@ class SklController extends Controller
         $pdf = Pdf::loadView('skl.pdf', compact('student', 'class', 'subjects', 'existingGrades', 'uspGrades', 'tempatCetak', 'tanggalCetak', 'nomorSkl', 'websiteLogo', 'websiteName', 'kepalaSekolah', 'average', 'isLulus', 'schoolProfile'));
         
         return $pdf->stream('SKL_' . $student->nis . '_' . $student->name . '.pdf');
+    }
+
+    /**
+     * Nilai Akhir: Pilih kelas
+     */
+    public function nilaiAkhirIndex()
+    {
+        $classes = SchoolClass::withCount(['students' => function ($query) {
+            $query->where('is_active', true);
+        }])->paginate(10);
+        return view('skl.nilai_akhir_index', compact('classes'));
+    }
+
+    /**
+     * Nilai Akhir: Tampilkan per kelas
+     * NA per mapel = (Rata-rata Rapor * 60%) + (Nilai USP * 40%)
+     */
+    public function nilaiAkhirShow(Request $request, SchoolClass $class)
+    {
+        $students = Student::where('school_class_id', $class->id)
+            ->where('is_active', true)
+            ->orderBy('name', 'asc')
+            ->get();
+            
+        $subjects = Subject::whereNotNull('order')->orderBy('order', 'asc')->get();
+
+        // Aggregate rapor grades: average per subject per student across all semesters
+        $existingGradesRaw = \DB::table('rapors')
+            ->where('school_class_id', $class->id)
+            ->get();
+            
+        $aggregatedGrades = [];
+        foreach ($existingGradesRaw as $grade) {
+            $key = $grade->student_id . '_' . $grade->subject_id;
+            if (!isset($aggregatedGrades[$key])) {
+                $aggregatedGrades[$key] = ['total' => 0, 'semesters' => []];
+            }
+            $aggregatedGrades[$key]['total'] += floatval($grade->grade);
+            if (!in_array($grade->semester_id, $aggregatedGrades[$key]['semesters'])) {
+                $aggregatedGrades[$key]['semesters'][] = $grade->semester_id;
+            }
+        }
+        
+        $existingGrades = [];
+        foreach ($aggregatedGrades as $key => $data) {
+            $semesterCount = count($data['semesters']);
+            $existingGrades[$key] = (object) ['grade' => $semesterCount > 0 ? ($data['total'] / $semesterCount) : 0];
+        }
+
+        // Fetch USP grades
+        $uspGrades = \DB::table('usps')
+            ->where('school_class_id', $class->id)
+            ->get()
+            ->keyBy(function ($item) {
+                return $item->student_id . '_' . $item->subject_id;
+            });
+
+        return view('skl.nilai_akhir_show', compact('class', 'students', 'subjects', 'existingGrades', 'uspGrades'));
     }
 
     /**

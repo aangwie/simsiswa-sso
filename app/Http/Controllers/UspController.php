@@ -49,6 +49,7 @@ class UspController extends Controller
         foreach ($grades as $student_id => $studentSubjects) {
             foreach ($studentSubjects as $subject_id => $grade) {
                 if ($grade !== null && $grade !== '') {
+                    $grade = str_replace(',', '.', $grade);
                     Usp::updateOrCreate(
                         [
                             'school_class_id' => $class->id,
@@ -56,7 +57,7 @@ class UspController extends Controller
                             'subject_id' => $subject_id,
                         ],
                         [
-                            'grade' => $grade
+                            'grade' => round(floatval($grade), 2)
                         ]
                     );
                 }
@@ -91,6 +92,7 @@ class UspController extends Controller
         foreach ($subjects as $subject) {
             $headers[] = $subject->code ?: $subject->name;
         }
+        $headers[] = 'Rata-Rata';
         $sheet->fromArray($headers, null, 'A1');
 
         $row = 2;
@@ -99,10 +101,18 @@ class UspController extends Controller
                 $student->id,
                 $student->name
             ];
+            $totalUsp = 0;
+            $countUsp = 0;
             foreach ($subjects as $subject) {
                 $key = $student->id . '_' . $subject->id;
-                $rowData[] = isset($existingGrades[$key]) ? $existingGrades[$key]->grade : '';
+                $grade = isset($existingGrades[$key]) ? $existingGrades[$key]->grade : null;
+                $rowData[] = $grade !== null ? floatval($grade) : '';
+                if ($grade !== null && $grade !== '') {
+                    $totalUsp += floatval($grade);
+                    $countUsp++;
+                }
             }
+            $rowData[] = $countUsp > 0 ? round($totalUsp / $countUsp, 2) : '';
             $sheet->fromArray($rowData, null, 'A' . $row);
             $row++;
         }
@@ -209,7 +219,7 @@ class UspController extends Controller
                                 'subject_id' => $subject_id,
                             ],
                             [
-                                'grade' => $grade
+                                'grade' => round(floatval($grade), 2)
                             ]
                         );
                         $count++;
