@@ -108,19 +108,19 @@
         </div>
 
         <!-- Preview Card (Horizontal Split Layout) -->
-        <div class="bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-2xl shadow-xl p-6 relative overflow-hidden border border-indigo-950">
+        <div class="bg-gradient-to-br from-teal-800 via-teal-600 to-teal-50 text-white rounded-2xl shadow-xl p-6 relative overflow-hidden border border-teal-700">
             <!-- Background decorative elements -->
-            <div class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-indigo-500/10 blur-xl pointer-events-none"></div>
-            <div class="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-purple-500/10 blur-xl pointer-events-none"></div>
+            <div class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white/10 blur-xl pointer-events-none"></div>
+            <div class="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-teal-950/20 blur-xl pointer-events-none"></div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10 items-center">
                 <!-- Info Section (Left) -->
-                <div class="space-y-4">
-                    <span class="px-2.5 py-1 bg-white/10 rounded-full text-[10px] font-bold uppercase tracking-wider text-indigo-300">
+                <div class="space-y-4 text-white">
+                    <span class="px-2.5 py-1 bg-white/20 border border-white/30 rounded-full text-[10px] font-bold uppercase tracking-wider text-white">
                         Pratinjau Status
                     </span>
                     <h3 class="text-xl font-bold mt-2">Live Countdown</h3>
-                    <p class="text-xs text-indigo-200/70">Status akses halaman kelulusan siswa berdasarkan waktu server saat ini.</p>
+                    <p class="text-xs text-teal-100">Status akses halaman kelulusan siswa berdasarkan waktu server saat ini.</p>
                     
                     @php
                         $tanggal = $settings['jadwal_pengumuman_tanggal'] ?? null;
@@ -129,57 +129,57 @@
                         $targetIso = $hasJadwal ? $tanggal . 'T' . $jam . ':00' : null;
                     @endphp
 
-                    <div class="bg-white/5 rounded-xl p-4 border border-white/10 space-y-3">
+                    <div class="bg-teal-900/40 rounded-xl p-4 border border-teal-700/50 space-y-3">
                         <div class="flex justify-between items-center gap-4">
-                            <span class="text-[10px] text-indigo-300/80 uppercase font-semibold">Jadwal Pengumuman</span>
+                            <span class="text-[10px] text-teal-200 uppercase font-semibold">Jadwal Pengumuman</span>
                             <span class="text-xs font-bold text-white text-right">
                                 @if($hasJadwal)
                                     {{ \Carbon\Carbon::parse($tanggal)->translatedFormat('d F Y') }} pukul {{ $jam }} WIB
                                 @else
-                                    <span class="text-green-400 font-medium">Bebas Akses (Selalu Terbuka)</span>
+                                    <span class="text-green-300 font-medium">Bebas Akses (Selalu Terbuka)</span>
                                 @endif
                             </span>
                         </div>
 
                         <div class="flex justify-between items-center">
-                            <span class="text-[10px] text-indigo-300/80 uppercase font-semibold">Status Saat Ini</span>
-                            <span id="admin-status-badge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[10px] font-bold bg-slate-700 text-slate-300">
+                            <span class="text-[10px] text-teal-200 uppercase font-semibold">Status Saat Ini</span>
+                            <span id="admin-status-badge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[10px] font-bold bg-teal-900 text-teal-200">
                                 Mengkalkulasi...
                             </span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Countdown Section (Right) -->
-                <div class="flex flex-col justify-center">
+                <!-- Countdown Section (Right - Light Side) -->
+                <div class="flex flex-col justify-center text-teal-950">
                     <div id="admin-countdown-wrapper" class="hidden">
-                        <span class="block text-[10px] text-indigo-300/80 uppercase font-semibold mb-3 text-center md:text-left">Sisa Waktu Hitung Mundur</span>
+                        <span class="block text-[10px] text-teal-900 uppercase font-bold tracking-wider mb-3 text-center md:text-left">Sisa Waktu Hitung Mundur</span>
                         <div class="grid grid-cols-4 gap-3 text-center">
-                            <div class="bg-white/5 rounded-xl p-3 border border-white/10 shadow-lg">
-                                <span id="admin-cd-days" class="block text-2xl md:text-3xl font-extrabold text-white leading-none">00</span>
-                                <span class="text-[9px] text-indigo-300 uppercase font-bold tracking-wider mt-1.5 block">Hari</span>
+                            <div class="bg-white rounded-xl p-3 border border-teal-200 shadow-md">
+                                <span id="admin-cd-days" class="block text-2xl md:text-3xl font-extrabold text-teal-900 leading-none">00</span>
+                                <span class="text-[9px] text-teal-600 uppercase font-bold tracking-wider mt-1.5 block">Hari</span>
                             </div>
-                            <div class="bg-white/5 rounded-xl p-3 border border-white/10 shadow-lg">
-                                <span id="admin-cd-hours" class="block text-2xl md:text-3xl font-extrabold text-white leading-none">00</span>
-                                <span class="text-[9px] text-indigo-300 uppercase font-bold tracking-wider mt-1.5 block">Jam</span>
+                            <div class="bg-white rounded-xl p-3 border border-teal-200 shadow-md">
+                                <span id="admin-cd-hours" class="block text-2xl md:text-3xl font-extrabold text-teal-900 leading-none">00</span>
+                                <span class="text-[9px] text-teal-600 uppercase font-bold tracking-wider mt-1.5 block">Jam</span>
                             </div>
-                            <div class="bg-white/5 rounded-xl p-3 border border-white/10 shadow-lg">
-                                <span id="admin-cd-minutes" class="block text-2xl md:text-3xl font-extrabold text-white leading-none">00</span>
-                                <span class="text-[9px] text-indigo-300 uppercase font-bold tracking-wider mt-1.5 block">Menit</span>
+                            <div class="bg-white rounded-xl p-3 border border-teal-200 shadow-md">
+                                <span id="admin-cd-minutes" class="block text-2xl md:text-3xl font-extrabold text-teal-900 leading-none">00</span>
+                                <span class="text-[9px] text-teal-600 uppercase font-bold tracking-wider mt-1.5 block">Menit</span>
                             </div>
-                            <div class="bg-white/5 rounded-xl p-3 border border-white/10 shadow-lg">
-                                <span id="admin-cd-seconds" class="block text-2xl md:text-3xl font-extrabold text-white leading-none">00</span>
-                                <span class="text-[9px] text-indigo-300 uppercase font-bold tracking-wider mt-1.5 block">Detik</span>
+                            <div class="bg-white rounded-xl p-3 border border-teal-200 shadow-md">
+                                <span id="admin-cd-seconds" class="block text-2xl md:text-3xl font-extrabold text-teal-900 leading-none">00</span>
+                                <span class="text-[9px] text-teal-600 uppercase font-bold tracking-wider mt-1.5 block">Detik</span>
                             </div>
                         </div>
                     </div>
 
-                    <div id="admin-accessible-wrapper" class="hidden bg-green-500/10 border border-green-500/20 rounded-2xl p-5 text-center shadow-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-400 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div id="admin-accessible-wrapper" class="hidden bg-teal-800/10 border border-teal-200/50 rounded-2xl p-5 text-center shadow-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-teal-700 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <p class="text-sm font-bold text-green-400">Akses Dibuka</p>
-                        <p class="text-[11px] text-green-300/80 mt-1">Halaman Cek Kelulusan aktif & dapat diakses sepenuhnya oleh siswa.</p>
+                        <p class="text-sm font-bold text-teal-800">Akses Dibuka</p>
+                        <p class="text-[11px] text-teal-900/80 mt-1">Halaman Cek Kelulusan aktif & dapat diakses sepenuhnya oleh siswa.</p>
                     </div>
                 </div>
             </div>
