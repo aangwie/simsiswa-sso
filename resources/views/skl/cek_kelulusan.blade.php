@@ -98,6 +98,16 @@
         .pulse-glow {
             animation: pulse-glow 3s ease-in-out infinite;
         }
+
+        .swal-gradient-popup {
+            background: linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%) !important;
+        }
+
+        .swal-gradient-popup .swal2-title,
+        .swal-gradient-popup .swal2-html-container,
+        .swal-gradient-popup .swal2-content {
+            color: #1e293b !important;
+        }
     </style>
 </head>
 
@@ -340,7 +350,7 @@
                             title: 'Akses Belum Dibuka',
                             html: `
                                 <div class="text-slate-600 dark:text-slate-300">
-                                    <p class="text-sm mb-4">Pengumuman kelulusan belum dimulai. Silakan kembali setelah hitung mundur selesai:</p>
+                                    <p class="text-sm mb-4" style="color: #000 !important;">Pengumuman kelulusan belum dimulai. Silakan kembali setelah hitung mundur selesai:</p>
                                     <div class="grid grid-cols-4 gap-2 text-center my-4 font-mono">
                                         <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-2.5">
                                             <span id="swal-days" class="block text-xl font-bold text-indigo-600 leading-none">00</span>
@@ -361,7 +371,13 @@
                                     </div>
                                 </div>
                             `,
-                            icon: 'info',
+                            imageUrl: "{{ asset('images/siswaku.png') }}",
+                            imageWidth: 250,
+                            imageHeight: 250,
+                            imageAlt: 'Siswaku',
+                            customClass: {
+                                popup: 'swal-gradient-popup'
+                            },
                             confirmButtonText: 'Tutup',
                             confirmButtonColor: '#4f46e5',
                             didOpen: () => {
