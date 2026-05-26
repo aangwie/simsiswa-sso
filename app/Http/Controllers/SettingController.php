@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Process;
 
 class SettingController extends Controller
 {
+    private $copyErrors = [];
+
     public function website()
     {
         $settings = Setting::whereIn('key', ['website_name', 'website_logo'])->get()->pluck('value', 'key');
@@ -250,6 +252,39 @@ class SettingController extends Controller
         $output = "";
         $owner = 'aangwie';
         $repo = 'simsiswa-sso';
+        $this->copyErrors = [];
+
+        // Diagnostics
+        $output .= "--- SYSTEM DIAGNOSTICS ---\n";
+        $output .= "Project Path: {$projectPath}\n";
+        $output .= "Is project path writable? " . (is_writable($projectPath) ? "YES" : "NO") . "\n";
+        
+        $configPath = $projectPath . DIRECTORY_SEPARATOR . 'config';
+        $output .= "Config Path: {$configPath}\n";
+        $output .= "Does config path exist? " . (is_dir($configPath) ? "YES" : "NO") . "\n";
+        if (is_dir($configPath)) {
+            $output .= "Is config path writable? " . (is_writable($configPath) ? "YES" : "NO") . "\n";
+            $output .= "Config path permissions: " . substr(sprintf('%o', fileperms($configPath)), -4) . "\n";
+        }
+        
+        $appConfigPath = $configPath . DIRECTORY_SEPARATOR . 'app.php';
+        $output .= "config/app.php exists? " . (file_exists($appConfigPath) ? "YES" : "NO") . "\n";
+        if (file_exists($appConfigPath)) {
+            $output .= "config/app.php size: " . filesize($appConfigPath) . " bytes\n";
+            $output .= "config/app.php writable? " . (is_writable($appConfigPath) ? "YES" : "NO") . "\n";
+            $output .= "config/app.php permissions: " . substr(sprintf('%o', fileperms($appConfigPath)), -4) . "\n";
+        }
+        
+        if (function_exists('disk_free_space')) {
+            $free = @disk_free_space($projectPath);
+            $total = @disk_total_space($projectPath);
+            if ($free !== false && $total !== false) {
+                $output .= "Free Disk Space: " . round($free / (1024 * 1024), 2) . " MB / " . round($total / (1024 * 1024), 2) . " MB\n";
+            } else {
+                $output .= "Disk Space: Unable to retrieve space info.\n";
+            }
+        }
+        $output .= "--------------------------\n\n";
 
         // Step 1: Get latest commit info from API
         $output .= "Fetching latest commit info from GitHub API...\n";
@@ -320,6 +355,14 @@ class SettingController extends Controller
         $skipDirs = ['.git', 'vendor', 'node_modules', 'storage', '.env'];
         $updatedCount = $this->copyDirectory($sourceDir, $projectPath, $skipDirs);
         $output .= "Updated {$updatedCount} files.\n\n";
+
+        if (!empty($this->copyErrors)) {
+            $output .= "--- WARNING / ERRORS ENCOUNTERED DURING COPY ---\n";
+            foreach ($this->copyErrors as $error) {
+                $output .= "- {$error}\n";
+            }
+            $output .= "\nBeberapa berkas gagal diperbarui. Harap periksa hak akses (permission) atau kuota disk di hosting Anda.\n\n";
+        }
 
         // Step 5: Cleanup
         @unlink($tempZip);
@@ -411,12 +454,28 @@ class SettingController extends Controller
 
             if (is_dir($srcPath)) {
                 if (!is_dir($dstPath)) {
-                    mkdir($dstPath, 0755, true);
+                    if (!@mkdir($dstPath, 0755, true)) {
+                        $err = error_get_last();
+                        $this->copyErrors[] = "Gagal membuat folder: {$dstPath} (" . ($err['message'] ?? 'Unknown error') . ")";
+                    }
                 }
                 $count += $this->copyDirectory($srcPath, $dstPath, []);
             } else {
-                copy($srcPath, $dstPath);
-                $count++;
+                if (!is_readable($srcPath)) {
+                    $this->copyErrors[] = "File sumber tidak terbaca: {$srcPath}";
+                    continue;
+                }
+                if (file_exists($dstPath) && !is_writable($dstPath)) {
+                    $this->copyErrors[] = "File tujuan tidak dapat ditulis (Permission Denied): {$dstPath}";
+                    @chmod($dstPath, 0644);
+                }
+                
+                if (!@copy($srcPath, $dstPath)) {
+                    $err = error_get_last();
+                    $this->copyErrors[] = "Gagal menyalin: {$srcPath} -> {$dstPath} (" . ($err['message'] ?? 'Unknown error') . ")";
+                } else {
+                    $count++;
+                }
             }
         }
         closedir($dir);
