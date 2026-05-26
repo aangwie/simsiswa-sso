@@ -64,10 +64,18 @@
                     <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest border-b border-slate-50 pb-2">
                         Pengaturan Umum</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        @foreach($settings->whereIn('key', ['tempat_cetak', 'tanggal_cetak', 'nomor_skl']) as $setting)
+                        @foreach($settings->whereIn('key', ['tempat_cetak', 'tanggal_cetak', 'skl_kode', 'skl_no_urut_awal', 'skl_kode_sekolah']) as $setting)
                             <div class="space-y-1">
                                 <label class="block text-xs font-semibold text-slate-700 tracking-wide uppercase">
-                                    {{ str_replace('_', ' ', $setting->key) }}
+                                    @if($setting->key === 'skl_kode')
+                                        Kode Nomor SKL (Bagian Depan)
+                                    @elseif($setting->key === 'skl_no_urut_awal')
+                                        Nomor Urut Awal
+                                    @elseif($setting->key === 'skl_kode_sekolah')
+                                        Kode Sekolah SKL (Bagian Belakang)
+                                    @else
+                                        {{ str_replace('_', ' ', $setting->key) }}
+                                    @endif
                                 </label>
                                 <input type="text" name="{{ $setting->key }}" value="{{ $setting->value }}"
                                     class="w-full rounded-xl border-slate-200 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-4 py-2 text-sm">

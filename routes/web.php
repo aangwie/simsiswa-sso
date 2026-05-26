@@ -76,6 +76,10 @@ Route::middleware('auth')->group(function () {
     // Nilai Akhir
     Route::get('nilai-akhir', [SklController::class, 'nilaiAkhirIndex'])->name('nilai-akhir.index');
     Route::get('nilai-akhir/{class}', [SklController::class, 'nilaiAkhirShow'])->name('nilai-akhir.show');
+    Route::post('nilai-akhir/{class}', [SklController::class, 'nilaiAkhirStore'])->name('nilai-akhir.store');
+    Route::get('nilai-akhir/{class}/export-excel', [SklController::class, 'nilaiAkhirExportExcel'])->name('nilai-akhir.export-excel');
+    Route::get('nilai-akhir/{class}/import-template', [SklController::class, 'nilaiAkhirImportTemplate'])->name('nilai-akhir.import-template');
+    Route::post('nilai-akhir/{class}/import-excel', [SklController::class, 'nilaiAkhirImportExcel'])->name('nilai-akhir.import-excel');
 
     // BK (Bimbingan Konseling)
     Route::get('bk', [BkController::class, 'dashboard'])->name('bk.dashboard');

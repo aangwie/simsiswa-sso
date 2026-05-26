@@ -79,6 +79,33 @@ class SettingController extends Controller
 
     public function index()
     {
+        // Ensure new settings exist
+        $sklKodeExists = Setting::where('key', 'skl_kode')->exists();
+        if (!$sklKodeExists) {
+            $nomorSkl = Setting::where('key', 'nomor_skl')->first()?->value ?? '400.3.11.1/059/408.37.10.50/' . date('Y');
+            $parts = explode('/', $nomorSkl);
+            if (count($parts) >= 3) {
+                $sklKode = $parts[0] . '/';
+                $sklNoUrutAwal = intval($parts[1]);
+                array_shift($parts);
+                array_shift($parts);
+                $sklKodeSekolah = '/' . implode('/', $parts);
+            } else {
+                $sklKode = '400.3.11.1/';
+                $sklNoUrutAwal = 59;
+                $sklKodeSekolah = '/408.37.10.50/' . date('Y');
+            }
+            Setting::updateOrCreate(['key' => 'skl_kode'], ['value' => $sklKode]);
+            Setting::updateOrCreate(['key' => 'skl_no_urut_awal'], ['value' => $sklNoUrutAwal]);
+            Setting::updateOrCreate(['key' => 'skl_kode_sekolah'], ['value' => $sklKodeSekolah]);
+        } else {
+            // Ensure skl_no_urut_awal exists even if the other settings were already initialized
+            $sklNoUrutAwalExists = Setting::where('key', 'skl_no_urut_awal')->exists();
+            if (!$sklNoUrutAwalExists) {
+                Setting::updateOrCreate(['key' => 'skl_no_urut_awal'], ['value' => 1]);
+            }
+        }
+
         $settings = Setting::whereNotIn('key', ['website_name', 'website_logo'])->get();
         
         $lastCommit = "";

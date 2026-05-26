@@ -85,8 +85,8 @@
                                         $countUsp++;
                                     }
 
-                                    $rataAkhir = ($gradeValue + $uspValue) / 2;
-                                    $totalRataAkhir += $rataAkhir;
+                                    $finalGradeValue = isset($finalGrades[$key]) ? floatval($finalGrades[$key]->grade) : 0;
+                                    $totalRataAkhir += $finalGradeValue;
                                 @endphp
                                 <td class="px-1 py-1 border-r border-slate-200 text-center font-medium text-slate-600">
                                     {{ $gradeValue > 0 ? number_format($gradeValue, 0) : '-' }}

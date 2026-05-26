@@ -8,7 +8,7 @@
     <!-- Pengaturan Cetak -->
     <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
         <h2 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2">Pengaturan Cetak SKL</h2>
-        <form action="{{ route('skl.cetak.settings') }}" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form action="{{ route('skl.cetak.settings') }}" method="POST" class="grid grid-cols-1 md:grid-cols-3 gap-6">
             @csrf
             <div>
                 <label class="block text-sm font-semibold text-slate-700 tracking-wide mb-2">Tempat Cetak</label>
@@ -18,11 +18,54 @@
                 <label class="block text-sm font-semibold text-slate-700 tracking-wide mb-2">Tanggal Cetak</label>
                 <input type="date" name="tanggal_cetak" value="{{ $tanggalCetak }}" class="w-full rounded-xl border-slate-200 shadow-sm focus:ring-indigo-500 py-2 px-3 text-sm" required>
             </div>
-            <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-slate-700 tracking-wide mb-2">Nomor SKL</label>
-                <input type="text" name="nomor_skl" value="{{ $nomorSkl }}" placeholder="Contoh: 400.3.11.1/059/408.37.10.50/2026" class="w-full rounded-xl border-slate-200 shadow-sm focus:ring-indigo-500 py-2 px-3 text-sm" required>
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 tracking-wide mb-2">Nomor Urut Awal</label>
+                <input type="number" name="skl_no_urut_awal" value="{{ $sklNoUrutAwal }}" placeholder="Contoh: 56" min="1" class="w-full rounded-xl border-slate-200 shadow-sm focus:ring-indigo-500 py-2 px-3 text-sm" required>
             </div>
-            <div class="md:col-span-2 flex justify-end">
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 tracking-wide mb-2">Kode Nomor SKL (Bagian Depan)</label>
+                <input type="text" name="skl_kode" value="{{ $sklKode }}" placeholder="Contoh: 400.3.11.1/" class="w-full rounded-xl border-slate-200 shadow-sm focus:ring-indigo-500 py-2 px-3 text-sm" required>
+            </div>
+            <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-slate-700 tracking-wide mb-2">Kode Sekolah SKL (Bagian Belakang)</label>
+                <input type="text" name="skl_kode_sekolah" value="{{ $sklKodeSekolah }}" placeholder="Contoh: /408.37.10.50/2026" class="w-full rounded-xl border-slate-200 shadow-sm focus:ring-indigo-500 py-2 px-3 text-sm" required>
+            </div>
+            <div class="md:col-span-3 bg-indigo-50/50 p-4 rounded-xl border border-indigo-100/50 text-xs text-indigo-700">
+                <p class="font-semibold mb-1">💡 Preview Format Nomor SKL:</p>
+                <p class="font-mono text-sm mt-1">
+                    <span class="bg-indigo-100/80 px-2 py-0.5 rounded text-indigo-800 font-bold" id="preview-kode">{{ $sklKode }}</span><span class="bg-amber-100 px-2 py-0.5 rounded text-amber-800 font-bold" id="preview-no-urut">{{ str_pad($sklNoUrutAwal, 3, '0', STR_PAD_LEFT) }}</span><span class="bg-emerald-100 px-2 py-0.5 rounded text-emerald-800 font-bold" id="preview-kode-sekolah">{{ $sklKodeSekolah }}</span>
+                </p>
+                <p class="mt-2 text-slate-500 text-[11px]">Keterangan: Siswa pertama dalam urutan global akan mendapat nomor urut (<span class="text-amber-600 font-bold" id="preview-desc-no-urut">{{ str_pad($sklNoUrutAwal, 3, '0', STR_PAD_LEFT) }}</span>), lalu otomatis bertambah seiring jumlah siswa (misal: {{ str_pad($sklNoUrutAwal, 3, '0', STR_PAD_LEFT) }}, {{ str_pad($sklNoUrutAwal + 1, 3, '0', STR_PAD_LEFT) }}, dst).</p>
+            </div>
+            
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const inputKode = document.querySelector('input[name="skl_kode"]');
+                    const inputKodeSekolah = document.querySelector('input[name="skl_kode_sekolah"]');
+                    const inputNoUrutAwal = document.querySelector('input[name="skl_no_urut_awal"]');
+                    const previewKode = document.getElementById('preview-kode');
+                    const previewNoUrut = document.getElementById('preview-no-urut');
+                    const previewDescNoUrut = document.getElementById('preview-desc-no-urut');
+                    const previewKodeSekolah = document.getElementById('preview-kode-sekolah');
+            
+                    function updatePreview() {
+                        const rawNum = parseInt(inputNoUrutAwal.value) || 1;
+                        const paddedNum = String(rawNum).padStart(3, '0');
+                        
+                        previewKode.textContent = inputKode.value || '';
+                        previewNoUrut.textContent = paddedNum;
+                        previewDescNoUrut.textContent = paddedNum;
+                        previewKodeSekolah.textContent = inputKodeSekolah.value || '';
+                    }
+            
+                    if (inputKode && inputKodeSekolah && inputNoUrutAwal && previewKode && previewNoUrut && previewDescNoUrut && previewKodeSekolah) {
+                        inputKode.addEventListener('input', updatePreview);
+                        inputKodeSekolah.addEventListener('input', updatePreview);
+                        inputNoUrutAwal.addEventListener('input', updatePreview);
+                    }
+                });
+            </script>
+            <div class="md:col-span-3 flex justify-end">
                 <button type="submit" class="px-6 py-2 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-all text-sm shadow">
                     Simpan Pengaturan
                 </button>

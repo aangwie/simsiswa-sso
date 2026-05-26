@@ -63,7 +63,9 @@
                     <tbody class="divide-y divide-slate-100 text-sm">
                         @forelse($students as $index => $student)
                             <tr class="hover:bg-slate-50/50 transition-colors">
-                                <td class="px-4 py-3 text-center border-r border-slate-200 text-slate-500">{{ $index + 1 }}</td>
+                                <td class="px-4 py-3 text-center border-r border-slate-200 text-slate-500 font-mono">
+                                    {{ str_pad($startNumber + $index, 3, '0', STR_PAD_LEFT) }}
+                                </td>
                                 <td class="px-6 py-3 border-r border-slate-200 text-slate-600 font-mono text-sm">
                                     {{ $student->nis ?? '-' }}
                                 </td>
