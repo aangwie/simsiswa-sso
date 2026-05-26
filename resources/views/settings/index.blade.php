@@ -172,11 +172,9 @@
 
                     Swal.fire({
                         title: 'Update Selesai',
-                        text: 'Aplikasi telah berhasil diperbarui.',
+                        text: 'Aplikasi telah selesai diproses. Silakan periksa output log pada terminal hitam di bawah.',
                         icon: 'success',
-                        timer: 2000
-                    }).then(() => {
-                        window.location.reload();
+                        confirmButtonText: 'OK'
                     });
                 })
                 .catch(error => {
