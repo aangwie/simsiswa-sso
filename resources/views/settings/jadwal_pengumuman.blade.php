@@ -30,7 +30,7 @@
                 <h2 class="text-xl font-bold text-slate-800">Atur Waktu Pengumuman</h2>
             </div>
 
-            <form action="{{ route('settings.jadwal-pengumuman.update') }}" method="POST" class="p-6 space-y-6">
+            <form id="form-jadwal-pengumuman" action="{{ route('settings.jadwal-pengumuman.update') }}" method="POST" class="p-6 space-y-6">
                 @csrf
 
                 <!-- Info Box -->
@@ -264,7 +264,7 @@
                         if (result.isConfirmed) {
                             document.getElementById('jadwal_pengumuman_tanggal').value = '';
                             document.getElementById('jadwal_pengumuman_jam').value = '';
-                            document.querySelector('form').submit();
+                            document.getElementById('form-jadwal-pengumuman').submit();
                         }
                     });
                 });
