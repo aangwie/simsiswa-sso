@@ -77,6 +77,25 @@ class SettingController extends Controller
         return redirect()->back()->with('success', 'Pengaturan Website berhasil diperbarui.');
     }
 
+    public function jadwalPengumuman()
+    {
+        $settings = Setting::whereIn('key', ['jadwal_pengumuman_tanggal', 'jadwal_pengumuman_jam'])->get()->pluck('value', 'key');
+        return view('settings.jadwal_pengumuman', compact('settings'));
+    }
+
+    public function jadwalPengumumanUpdate(Request $request)
+    {
+        $request->validate([
+            'jadwal_pengumuman_tanggal' => 'nullable|date',
+            'jadwal_pengumuman_jam' => 'nullable|string',
+        ]);
+
+        Setting::updateOrCreate(['key' => 'jadwal_pengumuman_tanggal'], ['value' => $request->jadwal_pengumuman_tanggal]);
+        Setting::updateOrCreate(['key' => 'jadwal_pengumuman_jam'], ['value' => $request->jadwal_pengumuman_jam]);
+
+        return redirect()->back()->with('success', 'Jadwal Pengumuman berhasil diperbarui.');
+    }
+
     public function index()
     {
         // Ensure new settings exist

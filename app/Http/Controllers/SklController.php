@@ -624,7 +624,15 @@ class SklController extends Controller
      */
     public function cekKelulusan()
     {
-        return view('skl.cek_kelulusan');
+        $tanggalPengumuman = \App\Models\Setting::where('key', 'jadwal_pengumuman_tanggal')->first()?->value;
+        $jamPengumuman = \App\Models\Setting::where('key', 'jadwal_pengumuman_jam')->first()?->value;
+        
+        $targetIso = null;
+        if ($tanggalPengumuman && $jamPengumuman) {
+            $targetIso = $tanggalPengumuman . 'T' . $jamPengumuman . ':00';
+        }
+
+        return view('skl.cek_kelulusan', compact('targetIso'));
     }
 
     /**
@@ -632,6 +640,18 @@ class SklController extends Controller
      */
     public function cekKelulusanCheck(Request $request)
     {
+        $tanggalPengumuman = \App\Models\Setting::where('key', 'jadwal_pengumuman_tanggal')->first()?->value;
+        $jamPengumuman = \App\Models\Setting::where('key', 'jadwal_pengumuman_jam')->first()?->value;
+        
+        if ($tanggalPengumuman && $jamPengumuman) {
+            $announcementDateTime = \Carbon\Carbon::parse($tanggalPengumuman . ' ' . $jamPengumuman);
+            if (\Carbon\Carbon::now()->lt($announcementDateTime)) {
+                return redirect()->route('cek-kelulusan')
+                    ->withErrors(['identifier' => 'Akses Kelulusan belum dibuka. Silakan kembali saat waktu pengumuman tiba.'])
+                    ->withInput();
+            }
+        }
+
         $request->validate([
             'identifier' => 'required|string',
             'tanggal_lahir' => 'required|date_format:d/m/Y',

@@ -66,7 +66,7 @@
                 });
             </script>
             <div class="md:col-span-3 flex justify-end">
-                <button type="submit" class="px-6 py-2 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-all text-sm shadow">
+                <button type="submit" class="px-6 py-2 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-all text-sm shadow w-full sm:w-auto">
                     Simpan Pengaturan
                 </button>
             </div>

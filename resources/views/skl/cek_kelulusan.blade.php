@@ -321,6 +321,93 @@
 
             e.target.value = formatted;
         });
+
+        // Intercept form submit and show countdown SweetAlert2 if schedule not yet met
+        const targetIso = @json($targetIso ?? null);
+        
+        if (targetIso) {
+            const targetDate = new Date(targetIso);
+            const form = document.getElementById('form-cek-kelulusan');
+            
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    const now = new Date();
+                    if (now < targetDate) {
+                        e.preventDefault(); // Cancel form submission
+                        
+                        let timerInterval;
+                        Swal.fire({
+                            title: 'Akses Belum Dibuka',
+                            html: `
+                                <div class="text-slate-600 dark:text-slate-300">
+                                    <p class="text-sm mb-4">Pengumuman kelulusan belum dimulai. Silakan kembali setelah hitung mundur selesai:</p>
+                                    <div class="grid grid-cols-4 gap-2 text-center my-4 font-mono">
+                                        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-2.5">
+                                            <span id="swal-days" class="block text-xl font-bold text-indigo-600 leading-none">00</span>
+                                            <span class="text-[9px] text-slate-400 uppercase font-semibold">Hari</span>
+                                        </div>
+                                        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-2.5">
+                                            <span id="swal-hours" class="block text-xl font-bold text-indigo-600 leading-none">00</span>
+                                            <span class="text-[9px] text-slate-400 uppercase font-semibold">Jam</span>
+                                        </div>
+                                        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-2.5">
+                                            <span id="swal-minutes" class="block text-xl font-bold text-indigo-600 leading-none">00</span>
+                                            <span class="text-[9px] text-slate-400 uppercase font-semibold">Menit</span>
+                                        </div>
+                                        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-2.5">
+                                            <span id="swal-seconds" class="block text-xl font-bold text-indigo-600 leading-none">00</span>
+                                            <span class="text-[9px] text-slate-400 uppercase font-semibold">Detik</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `,
+                            icon: 'info',
+                            confirmButtonText: 'Tutup',
+                            confirmButtonColor: '#4f46e5',
+                            didOpen: () => {
+                                const updateSwalTimer = () => {
+                                    const swalNow = new Date();
+                                    const diff = targetDate - swalNow;
+                                    
+                                    if (diff <= 0) {
+                                        clearInterval(timerInterval);
+                                        Swal.fire({
+                                            title: 'Akses Dibuka!',
+                                            text: 'Jadwal pengumuman telah tiba. Halaman kelulusan sekarang dapat diakses.',
+                                            icon: 'success',
+                                            confirmButtonText: 'Cek Sekarang',
+                                            confirmButtonColor: '#4f46e5'
+                                        });
+                                        return;
+                                    }
+                                    
+                                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                                    
+                                    const elDays = document.getElementById('swal-days');
+                                    const elHours = document.getElementById('swal-hours');
+                                    const elMinutes = document.getElementById('swal-minutes');
+                                    const elSeconds = document.getElementById('swal-seconds');
+                                    
+                                    if (elDays) elDays.textContent = String(days).padStart(2, '0');
+                                    if (elHours) elHours.textContent = String(hours).padStart(2, '0');
+                                    if (elMinutes) elMinutes.textContent = String(minutes).padStart(2, '0');
+                                    if (elSeconds) elSeconds.textContent = String(seconds).padStart(2, '0');
+                                };
+                                
+                                updateSwalTimer();
+                                timerInterval = setInterval(updateSwalTimer, 1000);
+                            },
+                            willClose: () => {
+                                clearInterval(timerInterval);
+                            }
+                        });
+                    }
+                });
+            }
+        }
     </script>
 </body>
 

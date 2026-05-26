@@ -341,6 +341,20 @@
                         x-transition:enter-start="opacity-0 -translate-x-2"
                         x-transition:enter-end="opacity-100 translate-x-0">Pengaturan Umum</span>
                 </a>
+
+                <a href="{{ route('settings.jadwal-pengumuman') }}"
+                    class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('settings.jadwal-pengumuman') ? 'bg-indigo-800/60 text-white border-indigo-700/50 shadow-inner' : 'text-indigo-200 border border-transparent hover:bg-indigo-800/40 hover:text-white hover:border-indigo-700/30 transition-all' }}"
+                    :title="sidebarMinimized ? 'Jadwal Pengumuman' : ''">
+                    <svg class="h-5 w-5 flex-shrink-0 {{ request()->routeIs('settings.jadwal-pengumuman') ? 'text-indigo-300' : 'text-indigo-400 group-hover:text-indigo-300 transition-colors' }}"
+                        :class="{'mr-3': !sidebarMinimized}" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span x-show="!sidebarMinimized" x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0 -translate-x-2"
+                        x-transition:enter-end="opacity-100 translate-x-0">Jadwal Pengumuman</span>
+                </a>
             @endif
         </div>
 
