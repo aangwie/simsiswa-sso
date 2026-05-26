@@ -82,16 +82,25 @@
                         <p class="text-[10px] text-slate-400">Pilih waktu/jam akses dibuka.</p>
                     </div>
 
-                    <!-- Submit Button -->
+                    <!-- Action Buttons -->
                     <div class="flex flex-col justify-end">
-                        <label class="block text-xs font-semibold text-transparent select-none md:block hidden">Simpan</label>
-                        <button type="submit"
-                            class="w-full py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 active:bg-indigo-800 transition-all shadow-lg shadow-indigo-100 text-xs tracking-wider uppercase flex items-center justify-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-                            </svg>
-                            Simpan Pengaturan
-                        </button>
+                        <label class="block text-xs font-semibold text-transparent select-none md:block hidden">Aksi</label>
+                        <div class="flex gap-2">
+                            <button type="button" id="btn-reset-jadwal"
+                                class="flex-1 py-2.5 bg-white border border-red-200 text-red-600 font-bold rounded-xl hover:bg-red-50 active:bg-red-100 transition-all text-xs tracking-wider uppercase flex items-center justify-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                Reset
+                            </button>
+                            <button type="submit"
+                                class="flex-1 py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 active:bg-indigo-800 transition-all shadow-lg shadow-indigo-100 text-xs tracking-wider uppercase flex items-center justify-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                                </svg>
+                                Simpan
+                            </button>
+                        </div>
                         <p class="text-[10px] text-transparent select-none md:block hidden">&nbsp;</p>
                     </div>
                 </div>
@@ -236,4 +245,30 @@
         });
     </script>
     @endif
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const resetBtn = document.getElementById('btn-reset-jadwal');
+            if (resetBtn) {
+                resetBtn.addEventListener('click', function() {
+                    Swal.fire({
+                        title: 'Reset Jadwal Pengumuman?',
+                        text: 'Jadwal akan dikosongkan dan akses kelulusan akan langsung terbuka untuk umum.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#dc2626',
+                        cancelButtonColor: '#64748b',
+                        confirmButtonText: 'Ya, Reset Jadwal',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            document.getElementById('jadwal_pengumuman_tanggal').value = '';
+                            document.getElementById('jadwal_pengumuman_jam').value = '';
+                            document.querySelector('form').submit();
+                        }
+                    });
+                });
+            }
+        });
+    </script>
 @endsection
