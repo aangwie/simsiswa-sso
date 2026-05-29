@@ -262,7 +262,7 @@
                             @php
                                 $nilaiAkhir = isset($finalGrades[$subject->id]) ? floatval($finalGrades[$subject->id]->grade) : 0;
                             @endphp
-                            {{ number_format(round($nilaiAkhir), 0, ',', '.') }}
+                            {{ number_format($nilaiAkhir, 2, ',', '.') }}
                         </td>
                     </tr>
                 @endforeach
