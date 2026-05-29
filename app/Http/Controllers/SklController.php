@@ -383,6 +383,107 @@ class SklController extends Controller
         return $pdf->stream('SKL_' . $student->nis . '_' . $student->name . '.pdf');
     }
 
+        public function cetakClassPdf(SchoolClass $class)
+    {
+        $students = Student::where('school_class_id', $class->id)
+            ->where('is_active', true)
+            ->orderBy('name', 'asc')
+            ->get();
+
+        if ($students->isEmpty()) {
+            return redirect()->back()->withErrors(['Tidak ada siswa aktif di kelas ini untuk dicetak.']);
+        }
+
+        $subjects = Subject::whereNotNull('order')->orderBy('order', 'asc')->get();
+        $tempatCetak = Setting::where('key', 'tempat_cetak')->first()?->value ?? 'Pacitan';
+        $tanggalCetak = Setting::where('key', 'tanggal_cetak')->first()?->value ?? date('Y-m-d');
+        
+        $sklKode = Setting::where('key', 'skl_kode')->first()?->value ?? '400.3.11.1/';
+        $sklKodeSekolah = Setting::where('key', 'skl_kode_sekolah')->first()?->value ?? ('/408.37.10.50/' . date('Y'));
+        $sklNoUrutAwal = intval(Setting::where('key', 'skl_no_urut_awal')->first()?->value ?? 1);
+        
+        // Find all active students in the same grade and academic year, ordered by class name and student name
+        $studentsInGrade = Student::join('school_classes', 'students.school_class_id', '=', 'school_classes.id')
+            ->where('school_classes.grade', $class->grade)
+            ->where('school_classes.academic_year', $class->academic_year)
+            ->where('students.is_active', true)
+            ->orderBy('school_classes.name', 'asc')
+            ->orderBy('students.name', 'asc')
+            ->select('students.*')
+            ->get();
+
+        $websiteLogo = Setting::where('key', 'website_logo')->first()?->value;
+        $websiteName = Setting::where('key', 'website_name')->first()?->value ?? 'SIMSiswa';
+        $schoolProfile = \Illuminate\Support\Facades\DB::table('school_profiles')->first();
+        $kepalaSekolah = \Illuminate\Support\Facades\DB::table('teachers')->where('position', 'Kepala Sekolah')->first();
+
+        $studentsData = [];
+        
+        foreach ($students as $student) {
+            $existingGradesRaw = \DB::table('rapors')
+                ->where('student_id', $student->id)
+                ->get();
+
+            // Fetch USP grades for this student
+            $uspGradesRaw = \DB::table('usps')
+                ->where('student_id', $student->id)
+                ->get()
+                ->keyBy('subject_id');
+
+            // Fetch stored Final Grades for this student
+            $finalGradesRaw = \DB::table('final_grades')
+                ->where('student_id', $student->id)
+                ->get()
+                ->keyBy('subject_id');
+                
+            $existingGrades = [];
+            $uspGrades = [];
+            $finalGrades = [];
+            $totalFinalGrade = 0;
+            $countGrade = 0;
+            
+            foreach ($subjects as $subject) {
+                $subjectGrades = $existingGradesRaw->where('subject_id', $subject->id);
+                $total = $subjectGrades->sum('grade');
+                $semesterCount = $subjectGrades->pluck('semester_id')->unique()->count();
+                $avgRapor = $semesterCount > 0 ? ($total / $semesterCount) : 0;
+                
+                $existingGrades[$subject->id] = (object) ['grade' => $avgRapor];
+
+                $uspValue = isset($uspGradesRaw[$subject->id]) ? floatval($uspGradesRaw[$subject->id]->grade) : 0;
+                $uspGrades[$subject->id] = (object) ['grade' => $uspValue];
+
+                // Read the stored final grade
+                $finalGradeValue = isset($finalGradesRaw[$subject->id]) ? floatval($finalGradesRaw[$subject->id]->grade) : 0;
+                $finalGrades[$subject->id] = (object) ['grade' => $finalGradeValue];
+
+                $totalFinalGrade += $finalGradeValue;
+                $countGrade++;
+            }
+            $average = $countGrade > 0 ? ($totalFinalGrade / $countGrade) : 0;
+            
+            $index = $studentsInGrade->pluck('id')->search($student->id);
+            $sequenceNumber = str_pad(($index !== false ? $sklNoUrutAwal + $index : $sklNoUrutAwal), 3, '0', STR_PAD_LEFT);
+            
+            $nomorSkl = $sklKode . $sequenceNumber . $sklKodeSekolah;
+            $isLulus = $average >= 65; 
+
+            $studentsData[] = [
+                'student' => $student,
+                'existingGrades' => $existingGrades,
+                'uspGrades' => $uspGrades,
+                'finalGrades' => $finalGrades,
+                'nomorSkl' => $nomorSkl,
+                'average' => $average,
+                'isLulus' => $isLulus
+            ];
+        }
+
+        $pdf = Pdf::loadView('skl.pdf_all', compact('class', 'subjects', 'studentsData', 'tempatCetak', 'tanggalCetak', 'websiteLogo', 'websiteName', 'kepalaSekolah', 'schoolProfile'));
+        
+        return $pdf->stream('SKL_Massal_Kelas_' . $class->name . '.pdf');
+    }
+
     /**
      * Nilai Akhir: Pilih kelas
      */

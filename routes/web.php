@@ -67,7 +67,7 @@ Route::middleware('auth')->group(function () {
     Route::get('skl/cetak', [SklController::class, 'cetakIndex'])->name('skl.cetak.index');
     Route::post('skl/cetak/settings', [SklController::class, 'saveCetakSettings'])->name('skl.cetak.settings');
     Route::get('skl/cetak/{class}', [SklController::class, 'cetakShow'])->name('skl.cetak.show');
-
+    Route::get('skl/cetak/{class}/pdf', [SklController::class, 'cetakClassPdf'])->name('skl.cetak.class_pdf');
     // SKL
     Route::get('skl', [SklController::class, 'index'])->name('skl.index');
     Route::get('skl/{class}', [SklController::class, 'show'])->name('skl.show');
