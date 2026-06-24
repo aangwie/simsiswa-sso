@@ -251,11 +251,11 @@
                         </tr>
                         <tr>
                             <td>Tempat Lahir</td>
-                            <td>: {{ $student->tempat_lahir }}</td>
+                            <td>: {{ $student->tempat_lahir ?? '-' }}</td>
                         </tr>
                         <tr>
                             <td>Tanggal Lahir</td>
-                            <td>: {{ \Carbon\Carbon::parse($student->tanggal_lahir)->locale('id')->translatedFormat('d F Y') }}</td>
+                            <td>: {{ $student->tanggal_lahir ? \Carbon\Carbon::parse($student->tanggal_lahir)->locale('id')->translatedFormat('d F Y') : '-' }}</td>
                         </tr>
                         <tr>
                             <td>Jenis Kelamin</td>
